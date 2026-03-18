@@ -1,0 +1,23 @@
+@use "responsive" as *;
+
+:root {
+  --cl-white: #fff;
+  --cl-black: #130426;
+
+  --cl-main: #502958;
+  --cl-secondary: #ab760d;
+
+  --cl-text: #fbe5d8;
+}
+
+* {
+  font-family: "Montserrat", sans-serif;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--cl-text);
+  font-size: 18px;
+}

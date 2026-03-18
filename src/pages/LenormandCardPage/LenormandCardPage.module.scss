@@ -1,0 +1,31 @@
+.page {
+  background-color: var(--cl-secondary);
+  min-height: 100vh;
+}
+.wrapper {
+  max-width: 1200px;
+  padding: 70px 20px 140px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.introImg {
+  display: block;
+  width: 162px;
+  height: auto;
+  margin: 0 auto;
+  border: 10px solid var(--cl-secondary);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.notFound {
+  display: grid;
+  gap: 20px;
+}
+
+.backLink {
+  color: var(--cl-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

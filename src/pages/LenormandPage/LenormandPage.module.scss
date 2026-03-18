@@ -1,0 +1,32 @@
+.page {
+  background-color: var(--cl-secondary);
+  min-height: 100vh;
+}
+
+.title {
+  color: var(--cl-text);
+  font-family: Montserrat;
+  font-size: 100px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  line-height: normal;
+  text-transform: uppercase;
+}
+
+.wrapper {
+  max-width: 1200px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding-top: 70px;
+  padding-bottom: 140px;
+  width: 100%;
+}
+
+.cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 161px);
+  column-gap: 30px;
+  row-gap: 17px;
+}

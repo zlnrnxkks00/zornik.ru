@@ -1,0 +1,16 @@
+.cardContainer {
+  list-style: none;
+}
+
+.cardImage {
+  border-radius: 10px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.cardImage.border {
+  border: 8px solid transparent;
+}
+
+.cardTitle {
+  white-space: pre-line;
+}

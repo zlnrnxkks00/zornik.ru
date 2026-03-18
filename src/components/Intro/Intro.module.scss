@@ -1,0 +1,79 @@
+.intro {
+  min-height: 540px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: url("../../assets/intro_bg.png") no-repeat center center;
+  background-size: contain;
+  background-color: var(--cl-black);
+}
+
+.intro::after,
+.intro::before {
+  content: "Zornik";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(120px, 24vw, 280px);
+  display: flex;
+  align-items: center;
+  background-size: contain;
+  color: var(--cl-text);
+  text-transform: uppercase;
+  font-family: "Antic Didone", serif;
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  line-height: normal;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 0;
+}
+.intro::after {
+  left: 0;
+  padding-left: 10px;
+  background: url("../../assets/intro_bg_left.png") no-repeat center center;
+  background-size: contain;
+}
+
+.intro::before {
+  right: 0;
+  justify-content: end;
+  background: url("../../assets/intro_bg_right.png") no-repeat center center;
+  background-size: contain;
+  padding-right: 10px;
+}
+
+.header {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.nav {
+  max-width: 544px;
+  padding: 0 20px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.link {
+  color: var(--cl-text);
+  text-transform: uppercase;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
