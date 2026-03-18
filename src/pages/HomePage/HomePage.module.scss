@@ -1,0 +1,10 @@
+@use "responsive" as *;
+
+@include responsive(screen) {
+}
+
+@include responsive(tablet) {
+}
+
+@include responsive(phone) {
+}

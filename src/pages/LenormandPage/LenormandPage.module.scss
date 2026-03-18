@@ -1,3 +1,5 @@
+@use "responsive" as *;
+
 .page {
   background-color: var(--cl-secondary);
   min-height: 100vh;
@@ -29,4 +31,13 @@
   grid-template-columns: repeat(auto-fill, 161px);
   column-gap: 30px;
   row-gap: 17px;
+}
+
+@include responsive(screen) {
+}
+
+@include responsive(tablet) {
+}
+
+@include responsive(phone) {
 }

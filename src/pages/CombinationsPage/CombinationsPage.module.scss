@@ -1,3 +1,5 @@
+@use "responsive" as *;
+
 .page {
   background-color: var(--cl-main);
   min-height: 100vh;
@@ -49,4 +51,13 @@
   text-transform: uppercase;
   margin-bottom: 36px;
   text-align: center;
+}
+
+@include responsive(screen) {
+}
+
+@include responsive(tablet) {
+}
+
+@include responsive(phone) {
 }
