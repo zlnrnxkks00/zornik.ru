@@ -22,7 +22,68 @@ import moon_18 from "../assets/taro/18_moon.png";
 import sun_19 from "../assets/taro/19_sun.png";
 import judgement_20 from "../assets/taro/20_judgement.png";
 import world_21 from "../assets/taro/21_world.png";
-import tuz_kubki_22 from "../assets/taro/2_cups.png";
+
+import ace_cups from "../assets/taro/ace_cups.png";
+import _2_cups from "../assets/taro/2_cups.png";
+import _3_cups from "../assets/taro/3_cups.png";
+import _4_cups from "../assets/taro/4_cups.png";
+import _5_cups from "../assets/taro/5_cups.png";
+import _6_cups from "../assets/taro/6_cups.png";
+import _7_cups from "../assets/taro/7_cups.png";
+import _8_cups from "../assets/taro/8_cups.png";
+import _9_cups from "../assets/taro/9_cups.png";
+import _10_cups from "../assets/taro/10_cups.png";
+import page_cups from "../assets/taro/page_cups.png";
+import knight_cups from "../assets/taro/knight_cups.png";
+import queen_cups from "../assets/taro/queen_cups.png";
+import king_cups from "../assets/taro/king_cups.png";
+
+import ace_pentacles from "../assets/taro/ace_pentacles.png";
+import _2_pentacles from "../assets/taro/2_pentacles.png";
+import _3_pentacles from "../assets/taro/3_pentacles.png";
+import _4_pentacles from "../assets/taro/4_pentacles.png";
+import _5_pentacles from "../assets/taro/5_pentacles.png";
+import _6_pentacles from "../assets/taro/6_pentacles.png";
+import _7_pentacles from "../assets/taro/7_pentacles.png";
+import _8_pentacles from "../assets/taro/8_pentacles.png";
+import _9_pentacles from "../assets/taro/9_pentacles.png";
+import _10_pentacles from "../assets/taro/10_pentacles.png";
+import page_pentacles from "../assets/taro/page_pentacles.png";
+import knight_pentacles from "../assets/taro/knight_pentacles.png";
+import queen_pentacles from "../assets/taro/queen_pentacles.png";
+import king_pentacles from "../assets/taro/king_pentacles.png";
+
+import ace_swords from "../assets/taro/ace_swords.png";
+import _2_swords from "../assets/taro/2_swords.png";
+import _3_swords from "../assets/taro/3_swords.png";
+import _4_swords from "../assets/taro/4_swords.png";
+import _5_swords from "../assets/taro/5_swords.png";
+import _6_swords from "../assets/taro/6_swords.png";
+import _7_swords from "../assets/taro/7_swords.png";
+import _8_swords from "../assets/taro/8_swords.png";
+import _9_swords from "../assets/taro/9_swords.png";
+import _10_swords from "../assets/taro/10_swords.png";
+import page_swords from "../assets/taro/page_swords.png";
+import knight_swords from "../assets/taro/knight_swords.png";
+import queen_swords from "../assets/taro/queen_swords.png";
+import king_swords from "../assets/taro/king_swords.png";
+
+import ace_wands from "../assets/taro/ace_wands.png";
+import _2_wands from "../assets/taro/2_wands.png";
+import _3_wands from "../assets/taro/3_wands.png";
+import _4_wands from "../assets/taro/4_wands.png";
+import _5_wands from "../assets/taro/5_wands.png";
+import _6_wands from "../assets/taro/6_wands.png";
+import _7_wands from "../assets/taro/7_wands.png";
+import _8_wands from "../assets/taro/8_wands.png";
+import _9_wands from "../assets/taro/9_wands.png";
+import _10_wands from "../assets/taro/10_wands.png";
+import page_wands from "../assets/taro/page_wands.png";
+import knight_wands from "../assets/taro/knight_wands.png";
+import queen_wands from "../assets/taro/queen_wands.png";
+import king_wands from "../assets/taro/king_wands.png";
+
+
 
 export const TARO_CARDS: { title: TTypeCardTaro; cards: TCard[] }[] = [
   {
@@ -55,77 +116,77 @@ export const TARO_CARDS: { title: TTypeCardTaro; cards: TCard[] }[] = [
   {
     title: "Кубки",
     cards: [
-      { id: 22, name: "Туз кубков", image: tuz_kubki_22 },
-      { id: 23, name: "Двойка кубков", image: shut_0 },
-      { id: 24, name: "Тройка кубков", image: shut_0 },
-      { id: 25, name: "Четверка кубков", image: shut_0 },
-      { id: 26, name: "Пятерка кубков", image: shut_0 },
-      { id: 27, name: "Шестерка кубков", image: shut_0 },
-      { id: 28, name: "Семерка кубков", image: shut_0 },
-      { id: 29, name: "Восьмерка кубков", image: shut_0 },
-      { id: 30, name: "Девятка кубков", image: shut_0 },
-      { id: 31, name: "Десятка кубков", image: shut_0 },
-      { id: 32, name: "Паж кубков", image: shut_0 },
-      { id: 33, name: "Рыцарь кубков", image: shut_0 },
-      { id: 34, name: "Королева кубков", image: shut_0 },
-      { id: 35, name: "Король кубков", image: shut_0 },
+      { id: 22, name: "Туз кубков", image: ace_cups },
+      { id: 23, name: "Двойка кубков", image: _2_cups },
+      { id: 24, name: "Тройка кубков", image: _3_cups },
+      { id: 25, name: "Четверка кубков", image: _4_cups },
+      { id: 26, name: "Пятерка кубков", image: _5_cups },
+      { id: 27, name: "Шестерка кубков", image: _6_cups },
+      { id: 28, name: "Семерка кубков", image: _7_cups },
+      { id: 29, name: "Восьмерка кубков", image: _8_cups },
+      { id: 30, name: "Девятка кубков", image: _9_cups },
+      { id: 31, name: "Десятка кубков", image: _10_cups },
+      { id: 32, name: "Паж кубков", image: page_cups },
+      { id: 33, name: "Рыцарь кубков", image: knight_cups },
+      { id: 34, name: "Королева кубков", image: queen_cups },
+      { id: 35, name: "Король кубков", image: king_cups },
     ],
   },
   {
     title: "Пентакли",
     cards: [
-      { id: 36, name: "Туз пентаклей", image: shut_0 },
-      { id: 37, name: "Двойка пентаклей", image: shut_0 },
-      { id: 38, name: "Тройка пентаклей", image: shut_0 },
-      { id: 39, name: "Четверка пентаклей", image: shut_0 },
-      { id: 40, name: "Пятерка пентаклей", image: shut_0 },
-      { id: 41, name: "Шестерка пентаклей", image: shut_0 },
-      { id: 42, name: "Семерка пентаклей", image: shut_0 },
-      { id: 43, name: "Восьмерка пентаклей", image: shut_0 },
-      { id: 44, name: "Девятка пентаклей", image: shut_0 },
-      { id: 45, name: "Десятка пентаклей", image: shut_0 },
-      { id: 46, name: "Паж пентаклей", image: shut_0 },
-      { id: 47, name: "Рыцарь пентаклей", image: shut_0 },
-      { id: 48, name: "Королева пентаклей", image: shut_0 },
-      { id: 49, name: "Король пентаклей", image: shut_0 },
+      { id: 36, name: "Туз пентаклей", image: ace_pentacles },
+      { id: 37, name: "Двойка пентаклей", image: _2_pentacles },
+      { id: 38, name: "Тройка пентаклей", image: _3_pentacles },
+      { id: 39, name: "Четверка пентаклей", image: _4_pentacles },
+      { id: 40, name: "Пятерка пентаклей", image: _5_pentacles },
+      { id: 41, name: "Шестерка пентаклей", image: _6_pentacles },
+      { id: 42, name: "Семерка пентаклей", image: _7_pentacles },
+      { id: 43, name: "Восьмерка пентаклей", image: _8_pentacles },
+      { id: 44, name: "Девятка пентаклей", image: _9_pentacles },
+      { id: 45, name: "Десятка пентаклей", image: _10_pentacles },
+      { id: 46, name: "Паж пентаклей", image: page_pentacles },
+      { id: 47, name: "Рыцарь пентаклей", image: knight_pentacles },
+      { id: 48, name: "Королева пентаклей", image: queen_pentacles },
+      { id: 49, name: "Король пентаклей", image: king_pentacles },
     ],
   },
   {
     title: "Мечи",
     cards: [
-      { id: 50, name: "Туз мечей", image: shut_0 },
-      { id: 51, name: "Двойка мечей", image: shut_0 },
-      { id: 52, name: "Тройка мечей", image: shut_0 },
-      { id: 53, name: "Четверка мечей", image: shut_0 },
-      { id: 54, name: "Пятерка мечей", image: shut_0 },
-      { id: 55, name: "Шестерка мечей", image: shut_0 },
-      { id: 56, name: "Семерка мечей", image: shut_0 },
-      { id: 57, name: "Восьмерка мечей", image: shut_0 },
-      { id: 58, name: "Девятка мечей", image: shut_0 },
-      { id: 59, name: "Десятка мечей", image: shut_0 },
-      { id: 60, name: "Паж мечей", image: shut_0 },
-      { id: 61, name: "Рыцарь мечей", image: shut_0 },
-      { id: 62, name: "Королева мечей", image: shut_0 },
-      { id: 63, name: "Король мечей", image: shut_0 },
+      { id: 50, name: "Туз мечей", image: ace_swords },
+      { id: 51, name: "Двойка мечей", image: _2_swords },
+      { id: 52, name: "Тройка мечей", image: _3_swords },
+      { id: 53, name: "Четверка мечей", image: _4_swords },
+      { id: 54, name: "Пятерка мечей", image: _5_swords },
+      { id: 55, name: "Шестерка мечей", image: _6_swords },
+      { id: 56, name: "Семерка мечей", image: _7_swords },
+      { id: 57, name: "Восьмерка мечей", image: _8_swords },
+      { id: 58, name: "Девятка мечей", image: _9_swords },
+      { id: 59, name: "Десятка мечей", image: _10_swords },
+      { id: 60, name: "Паж мечей", image: page_swords },
+      { id: 61, name: "Рыцарь мечей", image: knight_swords },
+      { id: 62, name: "Королева мечей", image: queen_swords },
+      { id: 63, name: "Король мечей", image: king_swords },
     ],
   },
   {
     title: "Жезлы",
     cards: [
-      { id: 64, name: "Туз жезлов", image: shut_0 },
-      { id: 65, name: "Двойка жезлов", image: shut_0 },
-      { id: 66, name: "Тройка жезлов", image: shut_0 },
-      { id: 67, name: "Четверка жезлов", image: shut_0 },
-      { id: 68, name: "Пятерка жезлов", image: shut_0 },
-      { id: 69, name: "Шестерка жезлов", image: shut_0 },
-      { id: 70, name: "Семерка жезлов", image: shut_0 },
-      { id: 71, name: "Восьмерка жезлов", image: shut_0 },
-      { id: 72, name: "Девятка жезлов", image: shut_0 },
-      { id: 73, name: "Десятка жезлов", image: shut_0 },
-      { id: 74, name: "Паж жезлов", image: shut_0 },
-      { id: 75, name: "Рыцарь жезлов", image: shut_0 },
-      { id: 76, name: "Королева жезлов", image: shut_0 },
-      { id: 77, name: "Король жезлов", image: shut_0 },
+      { id: 64, name: "Туз жезлов", image: ace_wands },
+      { id: 65, name: "Двойка жезлов", image: _2_wands },
+      { id: 66, name: "Тройка жезлов", image: _3_wands },
+      { id: 67, name: "Четверка жезлов", image: _4_wands },
+      { id: 68, name: "Пятерка жезлов", image: _5_wands },
+      { id: 69, name: "Шестерка жезлов", image: _6_wands },
+      { id: 70, name: "Семерка жезлов", image: _7_wands },
+      { id: 71, name: "Восьмерка жезлов", image: _8_wands },
+      { id: 72, name: "Девятка жезлов", image: _9_wands },
+      { id: 73, name: "Десятка жезлов", image: _10_wands },
+      { id: 74, name: "Паж жезлов", image: page_wands },
+      { id: 75, name: "Рыцарь жезлов", image: knight_wands },
+      { id: 76, name: "Королева жезлов", image: queen_wands },
+      { id: 77, name: "Король жезлов", image: king_wands },
     ],
-  },
+ },
 ];
