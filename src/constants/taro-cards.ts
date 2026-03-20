@@ -1,4 +1,6 @@
 import { TCard, TTypeCardTaro } from "../types";
+
+// Реальные карты
 import shut_0 from "../assets/taro/0_shut.png";
 import mag_1 from "../assets/taro/1_mag.png";
 import tuz_kubki_22 from "../assets/taro/22_tuz_kubki.png";
@@ -7,50 +9,104 @@ export const TARO_CARDS: { title: TTypeCardTaro; cards: TCard[] }[] = [
   {
     title: "Старшие арканы",
     cards: [
-      {
-        id: 0,
-        name: "Шут",
-        image: shut_0,
-      },
-
-      {
-        id: 1,
-        name: "Маг",
-        image: mag_1,
-      },
-      // Дописать оставшиеся
+      { id: 0, name: "Шут", image: shut_0 },
+      { id: 1, name: "Маг", image: mag_1 },
+      { id: 2, name: "Верховная Жрица", image: shut_0 },
+      { id: 3, name: "Императрица", image: shut_0 },
+      { id: 4, name: "Император", image: shut_0 },
+      { id: 5, name: "Иерофант", image: shut_0 },
+      { id: 6, name: "Влюбленные", image: shut_0 },
+      { id: 7, name: "Колесница", image: shut_0 },
+      { id: 8, name: "Сила", image: shut_0 },
+      { id: 9, name: "Отшельник", image: shut_0 },
+      { id: 10, name: "Колесо Фортуны", image: shut_0 },
+      { id: 11, name: "Справедливость", image: shut_0 },
+      { id: 12, name: "Повешенный", image: shut_0 },
+      { id: 13, name: "Смерть", image: shut_0 },
+      { id: 14, name: "Умеренность", image: shut_0 },
+      { id: 15, name: "Дьявол", image: shut_0 },
+      { id: 16, name: "Башня", image: shut_0 },
+      { id: 17, name: "Звезда", image: shut_0 },
+      { id: 18, name: "Луна", image: shut_0 },
+      { id: 19, name: "Солнце", image: shut_0 },
+      { id: 20, name: "Суд", image: shut_0 },
+      { id: 21, name: "Мир", image: shut_0 },
     ],
   },
   {
     title: "Кубки",
     cards: [
-      {
-        id: 22,
-        name: "Туз кубков",
-        image: tuz_kubki_22,
-      },
-      // Дописать оставшиеся
+      { id: 22, name: "Туз кубков", image: tuz_kubki_22 },
+      { id: 23, name: "Двойка кубков", image: shut_0 },
+      { id: 24, name: "Тройка кубков", image: shut_0 },
+      { id: 25, name: "Четверка кубков", image: shut_0 },
+      { id: 26, name: "Пятерка кубков", image: shut_0 },
+      { id: 27, name: "Шестерка кубков", image: shut_0 },
+      { id: 28, name: "Семерка кубков", image: shut_0 },
+      { id: 29, name: "Восьмерка кубков", image: shut_0 },
+      { id: 30, name: "Девятка кубков", image: shut_0 },
+      { id: 31, name: "Десятка кубков", image: shut_0 },
+      { id: 32, name: "Паж кубков", image: shut_0 },
+      { id: 33, name: "Рыцарь кубков", image: shut_0 },
+      { id: 34, name: "Королева кубков", image: shut_0 },
+      { id: 35, name: "Король кубков", image: shut_0 },
     ],
   },
-
   {
     title: "Пентакли",
     cards: [
-      // Дописать оставшиеся
+      { id: 36, name: "Туз пентаклей", image: shut_0 },
+      { id: 37, name: "Двойка пентаклей", image: shut_0 },
+      { id: 38, name: "Тройка пентаклей", image: shut_0 },
+      { id: 39, name: "Четверка пентаклей", image: shut_0 },
+      { id: 40, name: "Пятерка пентаклей", image: shut_0 },
+      { id: 41, name: "Шестерка пентаклей", image: shut_0 },
+      { id: 42, name: "Семерка пентаклей", image: shut_0 },
+      { id: 43, name: "Восьмерка пентаклей", image: shut_0 },
+      { id: 44, name: "Девятка пентаклей", image: shut_0 },
+      { id: 45, name: "Десятка пентаклей", image: shut_0 },
+      { id: 46, name: "Паж пентаклей", image: shut_0 },
+      { id: 47, name: "Рыцарь пентаклей", image: shut_0 },
+      { id: 48, name: "Королева пентаклей", image: shut_0 },
+      { id: 49, name: "Король пентаклей", image: shut_0 },
     ],
   },
-
   {
     title: "Мечи",
     cards: [
-      // Дописать оставшиеся
+      { id: 50, name: "Туз мечей", image: shut_0 },
+      { id: 51, name: "Двойка мечей", image: shut_0 },
+      { id: 52, name: "Тройка мечей", image: shut_0 },
+      { id: 53, name: "Четверка мечей", image: shut_0 },
+      { id: 54, name: "Пятерка мечей", image: shut_0 },
+      { id: 55, name: "Шестерка мечей", image: shut_0 },
+      { id: 56, name: "Семерка мечей", image: shut_0 },
+      { id: 57, name: "Восьмерка мечей", image: shut_0 },
+      { id: 58, name: "Девятка мечей", image: shut_0 },
+      { id: 59, name: "Десятка мечей", image: shut_0 },
+      { id: 60, name: "Паж мечей", image: shut_0 },
+      { id: 61, name: "Рыцарь мечей", image: shut_0 },
+      { id: 62, name: "Королева мечей", image: shut_0 },
+      { id: 63, name: "Король мечей", image: shut_0 },
     ],
   },
-
   {
     title: "Жезлы",
     cards: [
-      // Дописать оставшиеся
+      { id: 64, name: "Туз жезлов", image: shut_0 },
+      { id: 65, name: "Двойка жезлов", image: shut_0 },
+      { id: 66, name: "Тройка жезлов", image: shut_0 },
+      { id: 67, name: "Четверка жезлов", image: shut_0 },
+      { id: 68, name: "Пятерка жезлов", image: shut_0 },
+      { id: 69, name: "Шестерка жезлов", image: shut_0 },
+      { id: 70, name: "Семерка жезлов", image: shut_0 },
+      { id: 71, name: "Восьмерка жезлов", image: shut_0 },
+      { id: 72, name: "Девятка жезлов", image: shut_0 },
+      { id: 73, name: "Десятка жезлов", image: shut_0 },
+      { id: 74, name: "Паж жезлов", image: shut_0 },
+      { id: 75, name: "Рыцарь жезлов", image: shut_0 },
+      { id: 76, name: "Королева жезлов", image: shut_0 },
+      { id: 77, name: "Король жезлов", image: shut_0 },
     ],
   },
 ];
