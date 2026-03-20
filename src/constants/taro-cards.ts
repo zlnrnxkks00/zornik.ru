@@ -1,36 +1,55 @@
 import { TCard, TTypeCardTaro } from "../types";
 
-// Реальные карты
-import shut_0 from "../assets/taro/0_shut.png";
-import mag_1 from "../assets/taro/1_mag.png";
-import tuz_kubki_22 from "../assets/taro/22_tuz_kubki.png";
+import shut_0 from "../assets/taro/0_fool.png";
+import magician_1 from "../assets/taro/1_magician.png";
+import high_priestess_2 from "../assets/taro/2_high_priestess.png"
+import imperatritsa_3 from "../assets/taro/3_imperatritsa.png"
+import imperator_4 from "../assets/taro/4_imperator.png"
+import hierophant_5 from "../assets/taro/5_hierophant.png"
+import lovers_6 from "../assets/taro/6_lovers.png";
+import kolestnitsa_7 from "../assets/taro/7_kolesnitsa.png";
+import sila_8 from "../assets/taro/8_sila.png";
+import otshelinek_9 from "../assets/taro/9_otshelinek.png";
+import koleso_fortuna_10 from "../assets/taro/10_koleso_fortuna.png";
+import justice_11 from "../assets/taro/11_justice.png";
+import hangedman_12 from "../assets/taro/12_hangedman.png";
+import death_13 from "../assets/taro/13_death.png";
+import temperance_14 from "../assets/taro/14_temperance.png";
+import devil_15 from "../assets/taro/15_devil.png";
+import tower_16 from "../assets/taro/16_tower.png";
+import star_17 from "../assets/taro/17_star.png";
+import moon_18 from "../assets/taro/18_moon.png";
+import sun_19 from "../assets/taro/19_sun.png";
+import judgement_20 from "../assets/taro/20_judgement.png";
+import world_21 from "../assets/taro/21_world.png";
+import tuz_kubki_22 from "../assets/taro/2_cups.png";
 
 export const TARO_CARDS: { title: TTypeCardTaro; cards: TCard[] }[] = [
   {
     title: "Старшие арканы",
     cards: [
       { id: 0, name: "Шут", image: shut_0 },
-      { id: 1, name: "Маг", image: mag_1 },
-      { id: 2, name: "Верховная Жрица", image: shut_0 },
-      { id: 3, name: "Императрица", image: shut_0 },
-      { id: 4, name: "Император", image: shut_0 },
-      { id: 5, name: "Иерофант", image: shut_0 },
-      { id: 6, name: "Влюбленные", image: shut_0 },
-      { id: 7, name: "Колесница", image: shut_0 },
-      { id: 8, name: "Сила", image: shut_0 },
-      { id: 9, name: "Отшельник", image: shut_0 },
-      { id: 10, name: "Колесо Фортуны", image: shut_0 },
-      { id: 11, name: "Справедливость", image: shut_0 },
-      { id: 12, name: "Повешенный", image: shut_0 },
-      { id: 13, name: "Смерть", image: shut_0 },
-      { id: 14, name: "Умеренность", image: shut_0 },
-      { id: 15, name: "Дьявол", image: shut_0 },
-      { id: 16, name: "Башня", image: shut_0 },
-      { id: 17, name: "Звезда", image: shut_0 },
-      { id: 18, name: "Луна", image: shut_0 },
-      { id: 19, name: "Солнце", image: shut_0 },
-      { id: 20, name: "Суд", image: shut_0 },
-      { id: 21, name: "Мир", image: shut_0 },
+      { id: 1, name: "Маг", image: magician_1 },
+      { id: 2, name: "Верховная Жрица", image: high_priestess_2 },
+      { id: 3, name: "Императрица", image: imperatritsa_3 },
+      { id: 4, name: "Император", image: imperator_4 },
+      { id: 5, name: "Иерофант", image: hierophant_5 },
+      { id: 6, name: "Влюбленные", image: lovers_6 },
+      { id: 7, name: "Колесница", image: kolestnitsa_7 },
+      { id: 8, name: "Сила", image: sila_8 },
+      { id: 9, name: "Отшельник", image: otshelinek_9 },
+      { id: 10, name: "Колесо Фортуны", image: koleso_fortuna_10 },
+      { id: 11, name: "Справедливость", image: justice_11 },
+      { id: 12, name: "Повешенный", image: hangedman_12 },
+      { id: 13, name: "Смерть", image: death_13 },
+      { id: 14, name: "Умеренность", image: temperance_14 },
+      { id: 15, name: "Дьявол", image: devil_15 },
+      { id: 16, name: "Башня", image: tower_16},
+      { id: 17, name: "Звезда", image: star_17 },
+      { id: 18, name: "Луна", image: moon_18 },
+      { id: 19, name: "Солнце", image: sun_19 },
+      { id: 20, name: "Суд", image: judgement_20 },
+      { id: 21, name: "Мир", image: world_21 },
     ],
   },
   {
