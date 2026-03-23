@@ -4,6 +4,16 @@
   background-color: var(--cl-secondary);
   min-height: 100vh;
 }
+
+.introImg {
+  display: block;
+  width: 162px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
 .wrapper {
   max-width: 1200px;
   padding: 70px 20px 140px;
@@ -11,25 +21,103 @@
   margin: 0 auto;
 }
 
-.introImg {
-  display: block;
-  width: 162px;
-  height: auto;
+.card {
+  max-width: 800px;
   margin: 0 auto;
-  border: 10px solid var(--cl-secondary);
-  border-radius: 10px;
-  box-sizing: border-box;
+}
+
+.cardTitle {
+  font-family: Montserrat;
+  font-weight: 500;
+  font-size: 46px;
+  line-height: 100%;
+  text-align: center;
+  color: var(--cl-text);
+  margin-bottom: 72px;
+}
+
+.accordionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.accordionItem {
+  border-bottom: 1px solid var(--cl-border);
+  padding-bottom: 20px;
+}
+
+.accordionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-family: Montserrat;
+  font-weight: 300;
+  font-size: 36px;
+  line-height: 100%;
+  color: var(--cl-text);
+  gap: 30px
+  transition all 0.3s ease;
+  
+
+
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &.open {
+    font-weight: 700;
+  }
+
+  span {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+.arrow {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+  
+  &.arrowRotated {
+    transform: rotate(90deg);
+  }
+}
+
+.accordionContent {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cl-border);
+  
+  p {
+    font-family: Montserrat;
+    font-weight: 300;
+    font-size: 36px;
+    line-height: 130%;
+    text-align: center;
+    color: var(--cl-text);
+    margin: 0;
+  }
 }
 
 .notFound {
-  display: grid;
-  gap: 20px;
+  text-align: center;
+  padding: 40px 0;
+  
+  h2 {
+    font-family: Montserrat;
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
 }
 
 .backLink {
-  color: var(--cl-text);
+  color: var(--cl-primary);
   text-decoration: underline;
-  text-underline-offset: 4px;
+  font-family: Montserrat;
+  font-size: 18px;
 }
 
 @include responsive(screen) {
@@ -39,4 +127,20 @@
 }
 
 @include responsive(phone) {
+  .cardTitle {
+    font-size: 32px;
+    margin-bottom: 40px;
+  }
+  
+  .accordionHeader {
+    font-size: 24px;
+  }
+  
+  .accordionContent p {
+    font-size: 20px;
+  }
+  
+  .accordionContainer {
+    gap: 40px;
+  }
 }

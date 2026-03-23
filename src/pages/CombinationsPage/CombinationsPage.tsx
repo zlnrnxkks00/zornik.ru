@@ -1,63 +1,74 @@
-import { FC, useState } from "react";
+import { FC, useState, } from "react";
 import styles from "./CombinationsPage.module.scss";
 import { TARO_CARDS } from "../../constants/taro-cards";
 import { LENORMAND_CARDS } from "../../constants/lenormand-cards";
 import { Card } from "../../components/Card/Card";
 import { Intro } from "../../components/Intro/Intro";
 
-const YellowCard = ({name, image }: { name: string; image: string }) => (
-  <div style={{
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '10px'
-  }}>
-    <div style={{
-      position: 'relative',
-      width: '161px',
-      height: '250px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      <div style={{
-        position: 'absolute',
-        width: '161px',
-        height: '250px',
-        backgroundColor: '#AB760D',
-        borderRadius: '10px',
-        boxShadow: '0 4px 6px #00000040',
-        top: 0,
-        left: 0
-      }} />
-      <img 
-        src={image} 
-        alt={name} 
-        style={{
-          position: 'absolute',
-          width: '144px',
-          height: '230px',
-          opacity: 0.9,
-          borderRadius: '10px',
-          objectFit: 'cover',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)'
-        }} 
-      />
+// Компонент карты Таро с крестиком
+const TarotCardWithRemove = ({ 
+  name, 
+  image, 
+  onRemove 
+}: { 
+  name: string; 
+  image: string; 
+  onRemove: () => void;
+}) => (
+  <div className={styles.cardWithRemove}>
+    <Card name={name} image={image} link="" />
+    <button 
+      className={styles.removeButton} 
+      onClick={(e) => {
+        e.stopPropagation();
+        onRemove();
+      }}
+    >
+      ✕
+    </button>
+  </div>
+);
+
+// Компонент карты Ленорман с крестиком
+const LenormandCardWithRemove = ({ 
+  name, 
+  image, 
+  onRemove 
+}: { 
+  name: string; 
+  image: string; 
+  onRemove: () => void;
+}) => (
+  <div className={styles.cardWithRemove}>
+    <LenormandCard name={name} image={image} />
+    <button 
+      className={styles.removeButton} 
+      onClick={(e) => {
+        e.stopPropagation();
+        onRemove();
+      }}
+    >
+      ✕
+    </button>
+  </div>
+);
+
+const LenormandCard = ({ name, image, draggable = false, onDragStart }: { 
+  name: string; 
+  image: string; 
+  draggable?: boolean;
+  onDragStart?: (e: React.DragEvent) => void;
+}) => (
+  <div 
+    className={styles.lenormandCard}
+    draggable={draggable}
+    onDragStart={onDragStart}
+  >
+    <div className={styles.lenormandCardInner}>
+      <div className={styles.lenormandCardBack} />
+      <img src={image} alt={name} className={styles.lenormandCardImage} />
     </div>
-    <div style={{
-        fontFamily: 'Montserrat',
-        fontWeight: 400,
-        fontSize: '18px',
-        lineHeight: '100%',
-        textAlign: 'center',
-        color: 'var(--cl-text)',
-        maxWidth: '161px',
-       wordBreak: 'break-word'
-     }}>
-     {name}
-    </div>
+    <div className={styles.lenormandCardName}>{name}</div>
   </div>
 );
 
@@ -76,62 +87,249 @@ const lenormandCombinations: Record<string, string> = {
   "0_1_2": "Всадник + Клевер + Корабль: Счастливое путешествие, хорошие новости издалека",
 };
 
+interface DragData {
+  type: 'tarot' | 'lenormand';
+  id: number;
+  name: string;
+  image: string;
+}
+
 const CombinationsPage: FC = () => {
-  const [selectedTarotCards, setSelectedTarotCards] = useState<number[]>([]);
-  const [selectedLenormandCards, setSelectedLenormandCards] = useState<number[]>([]);
+  const [selectedTarotCards, setSelectedTarotCards] = useState<(number | null)[]>([null, null, null]);
+  const [selectedLenormandCards, setSelectedLenormandCards] = useState<(number | null)[]>([null, null, null]);
+
+  // Удаление карты Таро по индексу
+  const removeTarotCard = (index: number) => {
+    setSelectedTarotCards(prev => {
+      const newCards = [...prev];
+      newCards[index] = null;
+      return newCards;
+    });
+  };
+
+  // Удаление карты Ленорман по индексу
+  const removeLenormandCard = (index: number) => {
+    setSelectedLenormandCards(prev => {
+      const newCards = [...prev];
+      newCards[index] = null;
+      return newCards;
+    });
+  };
+
+  // Добавление карты Таро
+  const addTarotCard = (id: number) => {
+    setSelectedTarotCards(prev => {
+      const newCards = [...prev];
+      const emptyIndex = newCards.findIndex(card => card === null);
+      if (emptyIndex !== -1 && !newCards.includes(id)) {
+        newCards[emptyIndex] = id;
+      }
+      return newCards;
+    });
+  };
+
+  // Добавление карты Ленорман
+  const addLenormandCard = (id: number) => {
+    setSelectedLenormandCards(prev => {
+      const newCards = [...prev];
+      const emptyIndex = newCards.findIndex(card => card === null);
+      if (emptyIndex !== -1 && !newCards.includes(id)) {
+        newCards[emptyIndex] = id;
+      }
+      return newCards;
+    });
+  };
 
   const handleTarotSelect = (id: number) => {
-    if (selectedTarotCards.includes(id)) {
-      setSelectedTarotCards(selectedTarotCards.filter(cardId => cardId !== id));
-    } else if (selectedTarotCards.length < 3) {
-      setSelectedTarotCards([...selectedTarotCards, id]);
-    }
+    addTarotCard(id);
   };
 
   const handleLenormandSelect = (id: number) => {
-    if (selectedLenormandCards.includes(id)) {
-      setSelectedLenormandCards(selectedLenormandCards.filter(cardId => cardId !== id));
-    } else if (selectedLenormandCards.length < 3) {
-      setSelectedLenormandCards([...selectedLenormandCards, id]);
+    addLenormandCard(id);
+  };
+
+  // Drag start handler
+  const onDragStart = (type: 'tarot' | 'lenormand', id: number, name: string, image: string) => (e: React.DragEvent) => {
+    const dragData: DragData = { type, id, name, image };
+    e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+    e.dataTransfer.effectAllowed = 'copy';
+    
+    const dragImg = new Image();
+    dragImg.src = image;
+    dragImg.style.width = '100px';
+    dragImg.style.height = '150px';
+    e.dataTransfer.setDragImage(dragImg, 50, 75);
+  };
+
+  // Drop handler для Таро
+  const onTarotDrop = (position: number) => (e: React.DragEvent) => {
+    e.preventDefault();
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('text/plain')) as DragData;
+      if (data.type === 'tarot') {
+        setSelectedTarotCards(prev => {
+          const newCards = [...prev];
+          if (newCards[position] === null && !newCards.includes(data.id)) {
+            newCards[position] = data.id;
+          }
+          return newCards;
+        });
+      }
+    } catch (error) {
+      console.error('Drop error:', error);
     }
+  };
+
+  // Drop handler для Ленорман
+  const onLenormandDrop = (position: number) => (e: React.DragEvent) => {
+    e.preventDefault();
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('text/plain')) as DragData;
+      if (data.type === 'lenormand') {
+        setSelectedLenormandCards(prev => {
+          const newCards = [...prev];
+          if (newCards[position] === null && !newCards.includes(data.id)) {
+            newCards[position] = data.id;
+          }
+          return newCards;
+        });
+      }
+    } catch (error) {
+      console.error('Drop error:', error);
+    }
+  };
+
+  const onDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
   };
 
   // Получаем все карты Таро одним массивом
   const allTarotCards = TARO_CARDS.flatMap(group => group.cards);
-  const selectedTarotCardsData = allTarotCards.filter(card => selectedTarotCards.includes(card.id));
+  const selectedTarotCardsData = selectedTarotCards
+    .map(id => id !== null ? allTarotCards.find(card => card.id === id) : null)
+    .filter(card => card !== null);
+
+  // Получаем все карты Ленорман
+  const selectedLenormandCardsData = selectedLenormandCards
+    .map(id => id !== null ? LENORMAND_CARDS.find(card => card.id === id) : null)
+    .filter(card => card !== null);
 
   // Получаем описание для комбинации Таро
-  const getTarotCombinationText = () => {
-    if (selectedTarotCards.length === 2) {
-      const key = `${selectedTarotCards[0]}_${selectedTarotCards[1]}`;
-      return tarotCombinations[key] || `Сочетание ${selectedTarotCardsData[0]?.name} и ${selectedTarotCardsData[1]?.name} будет добавлено позже`;
-    } else if (selectedTarotCards.length === 3) {
-      const key = `${selectedTarotCards[0]}_${selectedTarotCards[1]}_${selectedTarotCards[2]}`;
-      return tarotCombinations[key] || `Сочетание ${selectedTarotCardsData.map(c => c.name).join(' + ')} будет добавлено позже`;
-    }
-    return "";
+  const getTarotCombinationText = (card1Id: number, card2Id: number) => {
+    const key = `${card1Id}_${card2Id}`;
+    return tarotCombinations[key] || `Сочетание карт будет добавлено позже`;
   };
 
   // Получаем описание для комбинации Ленорман
-  const getLenormandCombinationText = () => {
-    if (selectedLenormandCards.length === 2) {
-      const key = `${selectedLenormandCards[0]}_${selectedLenormandCards[1]}`;
-      const card1 = LENORMAND_CARDS.find(c => c.id === selectedLenormandCards[0]);
-      const card2 = LENORMAND_CARDS.find(c => c.id === selectedLenormandCards[1]);
-      return lenormandCombinations[key] || `Сочетание ${card1?.name} и ${card2?.name} будет добавлено позже`;
-    } else if (selectedLenormandCards.length === 3) {
-      const key = `${selectedLenormandCards[0]}_${selectedLenormandCards[1]}_${selectedLenormandCards[2]}`;
-      const cards = selectedLenormandCards.map(id => LENORMAND_CARDS.find(c => c.id === id)?.name).join(' + ');
-      return lenormandCombinations[key] || `Сочетание ${cards} будет добавлено позже`;
-    }
-    return "";
+  const getLenormandCombinationText = (card1Id: number, card2Id: number) => {
+    const key = `${card1Id}_${card2Id}`;
+    return lenormandCombinations[key] || `Сочетание карт будет добавлено позже`;
   };
+
+  // Получаем количество выбранных карт Таро (не null)
+  const selectedTarotCount = selectedTarotCards.filter(id => id !== null).length;
+  const selectedLenormandCount = selectedLenormandCards.filter(id => id !== null).length;
 
   return (
     <div className={styles.page}>
       <Intro>
         <h1 className={styles.title}>СОЧЕТАНИЯ</h1>
       </Intro>
+
+              {/* Блок выбора карт Таро */}
+        <div className={styles.selectionBlock}>
+          <div className={styles.selectionTitle}>ВЫБОР КАРТ</div>
+          
+          {/* Три фиксированных слота для карт */}
+          <div className={styles.selectedCards}>
+            {[0, 1, 2].map((index) => {
+              const cardId = selectedTarotCards[index];
+              const card = cardId !== null ? allTarotCards.find(c => c.id === cardId) : null;
+              return (
+                <div 
+                  key={index} 
+                  className={styles.selectedCardPlaceholder}
+                  onDrop={onTarotDrop(index)}
+                  onDragOver={onDragOver}
+                >
+                  {card ? (
+                    <TarotCardWithRemove 
+                      name={card.name} 
+                      image={card.image} 
+                      onRemove={() => removeTarotCard(index)}
+                    />
+                  ) : (
+                    <div className={styles.cardBackTaro}></div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Надпись ИЛИ */}
+          <div className={styles.orDivider}>ИЛИ</div>
+
+          {/* Подсказка когда карты не выбраны */}
+          {selectedTarotCount === 0 && (
+            <div className={styles.hintText}>
+              Нажмите или перетащите карты, чтобы увидеть сочетание
+            </div>
+          )}
+
+          {/* Комбинации карт Таро */}
+          {selectedTarotCount >= 2 && (
+            <div className={styles.combinationWrapper}>
+              <div className={styles.combinationPair}>
+                <div className={styles.combinationPairCards}>
+                  <Card 
+                    name={selectedTarotCardsData[0]?.name || ''} 
+                    image={selectedTarotCardsData[0]?.image || ''} 
+                    link="" 
+                  />
+                  <span className={styles.plus}>+</span>
+                  <Card 
+                    name={selectedTarotCardsData[1]?.name || ''} 
+                    image={selectedTarotCardsData[1]?.image || ''} 
+                    link="" 
+                  />
+                </div>
+                <div className={styles.combinationText}>
+                  <strong>{selectedTarotCardsData[0]?.name} + {selectedTarotCardsData[1]?.name}</strong>
+                  <p>{getTarotCombinationText(selectedTarotCardsData[0]?.id || 0, selectedTarotCardsData[1]?.id || 0)}</p>
+                </div>
+              </div>
+
+              {selectedTarotCount === 3 && (
+                <div className={styles.combinationPair}>
+                  <div className={styles.combinationPairCards}>
+                    <Card 
+                      name={selectedTarotCardsData[1]?.name || ''} 
+                      image={selectedTarotCardsData[1]?.image || ''} 
+                      link="" 
+                    />
+                    <span className={styles.plus}>+</span>
+                    <Card 
+                      name={selectedTarotCardsData[2]?.name || ''} 
+                      image={selectedTarotCardsData[2]?.image || ''} 
+                      link="" 
+                    />
+                  </div>
+                  <div className={styles.combinationText}>
+                    <strong>{selectedTarotCardsData[1]?.name} + {selectedTarotCardsData[2]?.name}</strong>
+                    <p>{getTarotCombinationText(selectedTarotCardsData[1]?.id || 0, selectedTarotCardsData[2]?.id || 0)}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {selectedTarotCount === 1 && (
+            <div className={styles.hintText}>
+              Выберите вторую карту (нажмите или перетащите)
+            </div>
+          )}
+        </div>
       
       <div className={styles.wrapper}>
         {/* ========== СЕКЦИЯ ТАРО ========== */}
@@ -145,6 +343,8 @@ const CombinationsPage: FC = () => {
                 <div 
                   key={id} 
                   onClick={() => handleTarotSelect(id)}
+                  draggable
+                  onDragStart={onDragStart('tarot', id, name, image)}
                   className={`${styles.cardWrapper} ${selectedTarotCards.includes(id) ? styles.selected : ''}`}
                 >
                   <Card name={name} image={image} link="" />
@@ -154,59 +354,98 @@ const CombinationsPage: FC = () => {
           </div>
         ))}
 
+                {/* Блок выбора карт Ленорман */}
         <div className={styles.selectionBlock}>
           <div className={styles.selectionTitle}>ВЫБОР КАРТ</div>
           
+          {/* Три фиксированных слота для карт */}
           <div className={styles.selectedCards}>
-            {[0, 1, 2].map((index) => (
-              <div key={index} className={styles.selectedCardPlaceholder}>
-                {selectedTarotCardsData[index] ? (
-                  <div style={{ width: '140px', height: '240px' }}>
-                  <Card 
-                    name={selectedTarotCardsData[index].name} 
-                    image={selectedTarotCardsData[index].image} 
-                    link="" 
-                  />
-                  </div>
-                ) : (
-                  <div className={styles.cardBackTaro}></div>
-                )}
-              </div>
-            ))}
+            {[0, 1, 2].map((index) => {
+              const cardId = selectedLenormandCards[index];
+              const card = cardId !== null ? LENORMAND_CARDS.find(c => c.id === cardId) : null;
+              return (
+                <div 
+                  key={index} 
+                  className={styles.selectedCardPlaceholder}
+                  onDrop={onLenormandDrop(index)}
+                  onDragOver={onDragOver}
+                >
+                  {card ? (
+                    <LenormandCardWithRemove 
+                      name={card.name} 
+                      image={card.image} 
+                      onRemove={() => removeLenormandCard(index)}
+                    />
+                  ) : (
+                    <div className={styles.cardBackLenormand}></div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          {/* Подсказка если карты не выбраны */}
-          {selectedTarotCards.length === 0 && (
+          <div className={styles.orDivider}>ИЛИ</div>
+
+          {selectedLenormandCount === 0 && (
             <div className={styles.hintText}>
-              Нажмите на интересующие вас карты, чтобы увидеть сочетание
+              Нажмите или перетащите карты, чтобы увидеть сочетание
             </div>
           )}
 
-          {selectedTarotCards.length >= 2 && (
-            <div className={styles.combinationTitle}>
-              {selectedTarotCardsData.map((card, index) => (
-                <span key={card.id}>
-                  {card.name} ({card.id})
-                  {index < selectedTarotCardsData.length - 1 ? ' + ' : ''}
-                </span>
-              ))}
+          {selectedLenormandCount >= 2 && (
+            <div className={styles.combinationWrapper}>
+              <div className={styles.combinationPair}>
+                <div className={styles.combinationPairCards}>
+                  <LenormandCard 
+                    name={selectedLenormandCardsData[0]?.name || ''} 
+                    image={selectedLenormandCardsData[0]?.image || ''} 
+                     
+                  />
+                  <span className={styles.plus}>+</span>
+                  <LenormandCard 
+                    name={selectedLenormandCardsData[1]?.name || ''} 
+                    image={selectedLenormandCardsData[1]?.image || ''} 
+                     
+                  />
+                </div>
+                <div className={styles.combinationText}>
+                  <strong>
+                    {selectedLenormandCardsData[0]?.name} + {selectedLenormandCardsData[1]?.name}
+                  </strong>
+                  <p>{getLenormandCombinationText(selectedLenormandCardsData[0]?.id || 0, selectedLenormandCardsData[1]?.id || 0)}</p>
+                </div>
+              </div>
+
+              {selectedLenormandCount === 3 && (
+                <div className={styles.combinationPair}>
+                  <div className={styles.combinationPairCards}>
+                    <LenormandCard 
+                      name={selectedLenormandCardsData[1]?.name || ''} 
+                      image={selectedLenormandCardsData[1]?.image || ''} 
+                      
+                    />
+                    <span className={styles.plus}>+</span>
+                    <LenormandCard 
+                      name={selectedLenormandCardsData[2]?.name || ''} 
+                      image={selectedLenormandCardsData[2]?.image || ''}  
+                    />
+                  </div>
+                  <div className={styles.combinationText}>
+                    <strong>
+                      {selectedLenormandCardsData[1]?.name} + {selectedLenormandCardsData[2]?.name}
+                    </strong>
+                    <p>{getLenormandCombinationText(selectedLenormandCardsData[1]?.id || 0, selectedLenormandCardsData[2]?.id || 0)}</p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Описание комбинации */}
-          {selectedTarotCards.length >= 2 && (
-            <div className={styles.combinationDescription}>
-              <p>{getTarotCombinationText()}</p>
-            </div>
-          )}
-
-          {/* Подсказка если выбрана 1 карта */}
-          {selectedTarotCards.length === 1 && (
+          {selectedLenormandCount === 1 && (
             <div className={styles.hintText}>
-              Выберите вторую или третью карту
+              Выберите вторую карту (нажмите или перетащите)
             </div>
           )}
-        </div>
 
         {/* ========== СЕКЦИЯ ЛЕНОРМАН ========== */}
         <h2 className={styles.sectionTitle}>ЛЕНОРМАН</h2>
@@ -219,69 +458,15 @@ const CombinationsPage: FC = () => {
               <div 
                 key={id} 
                 onClick={() => handleLenormandSelect(id)}
+                draggable
+                onDragStart={onDragStart('lenormand', id, name, image)}
                 className={`${styles.cardWrapper} ${selectedLenormandCards.includes(id) ? styles.selected : ''}`}
               >
-                <YellowCard name={name} image={image}  />
+                <LenormandCard name={name} image={image} />
               </div>
             ))}
           </ul>
         </div>
-
-        {/* Блок выбора карт Ленорман */}
-        <div className={styles.selectionBlock}>
-          <div className={styles.selectionTitle}>ВЫБОР КАРТ</div>
-          
-          {/* Три желтые карты (всегда) */}
-          <div className={styles.selectedCards}>
-            {[0, 1, 2].map((index) => {
-              const card = LENORMAND_CARDS.find(c => c.id === selectedLenormandCards[index]);
-              return (
-                <div key={index} className={styles.selectedCardPlaceholder}>
-                  {card ? (
-                    <YellowCard name={card.name} image={card.image} />
-                  ) : (
-                    <div className={styles.cardBackLenormand}></div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Подсказка если карты не выбраны */}
-          {selectedLenormandCards.length === 0 && (
-            <div className={styles.hintText}>
-              Нажмите на интересующие вас карты, чтобы увидеть сочетание
-            </div>
-          )}
-
-          {/* Названия выбранных карт с номерами */}
-          {selectedLenormandCards.length >= 2 && (
-            <div className={styles.combinationTitle}>
-              {selectedLenormandCards.map((id, index) => {
-                const card = LENORMAND_CARDS.find(c => c.id === id);
-                return card ? (
-                  <span key={id}>
-                    {card.name} ({card.id})
-                    {index < selectedLenormandCards.length - 1 ? ' + ' : ''}
-                  </span>
-                ) : null;
-              })}
-            </div>
-          )}
-
-          {/* Описание комбинации */}
-          {selectedLenormandCards.length >= 2 && (
-            <div className={styles.combinationDescription}>
-              <p>{getLenormandCombinationText()}</p>
-            </div>
-          )}
-
-          {/* Подсказка если выбрана 1 карта */}
-          {selectedLenormandCards.length === 1 && (
-            <div className={styles.hintText}>
-              Выберите вторую или третью карту
-            </div>
-          )}
         </div>
       </div>
     </div>
