@@ -1,76 +1,10 @@
-import { FC, useState, } from "react";
+import { FC, useState } from "react";
 import styles from "./CombinationsPage.module.scss";
 import { TARO_CARDS } from "../../constants/taro-cards";
 import { LENORMAND_CARDS } from "../../constants/lenormand-cards";
 import { Card } from "../../components/Card/Card";
 import { Intro } from "../../components/Intro/Intro";
-
-// Компонент карты Таро с крестиком
-const TarotCardWithRemove = ({ 
-  name, 
-  image, 
-  onRemove 
-}: { 
-  name: string; 
-  image: string; 
-  onRemove: () => void;
-}) => (
-  <div className={styles.cardWithRemove}>
-    <Card name={name} image={image} link="" />
-    <button 
-      className={styles.removeButton} 
-      onClick={(e) => {
-        e.stopPropagation();
-        onRemove();
-      }}
-    >
-      ✕
-    </button>
-  </div>
-);
-
-// Компонент карты Ленорман с крестиком
-const LenormandCardWithRemove = ({ 
-  name, 
-  image, 
-  onRemove 
-}: { 
-  name: string; 
-  image: string; 
-  onRemove: () => void;
-}) => (
-  <div className={styles.cardWithRemove}>
-    <LenormandCard name={name} image={image} />
-    <button 
-      className={styles.removeButton} 
-      onClick={(e) => {
-        e.stopPropagation();
-        onRemove();
-      }}
-    >
-      ✕
-    </button>
-  </div>
-);
-
-const LenormandCard = ({ name, image, draggable = false, onDragStart }: { 
-  name: string; 
-  image: string; 
-  draggable?: boolean;
-  onDragStart?: (e: React.DragEvent) => void;
-}) => (
-  <div 
-    className={styles.lenormandCard}
-    draggable={draggable}
-    onDragStart={onDragStart}
-  >
-    <div className={styles.lenormandCardInner}>
-      <div className={styles.lenormandCardBack} />
-      <img src={image} alt={name} className={styles.lenormandCardImage} />
-    </div>
-    <div className={styles.lenormandCardName}>{name}</div>
-  </div>
-);
+import rightArrow from "../../assets/other elements/right.png";
 
 // Временные данные для сочетаний
 const tarotCombinations: Record<string, string> = {
@@ -97,6 +31,16 @@ interface DragData {
 const CombinationsPage: FC = () => {
   const [selectedTarotCards, setSelectedTarotCards] = useState<(number | null)[]>([null, null, null]);
   const [selectedLenormandCards, setSelectedLenormandCards] = useState<(number | null)[]>([null, null, null]);
+  
+  // Состояние для открытых групп Таро
+  const [openTarotGroups, setOpenTarotGroups] = useState<Record<string, boolean>>({
+    "Старшие арканы": true,
+  });
+  
+  // Состояние для открытых групп Ленорман
+  const [openLenormandGroups, setOpenLenormandGroups] = useState<Record<string, boolean>>({
+    "Колода Ленорман": true,
+  });
 
   // Удаление карты Таро по индексу
   const removeTarotCard = (index: number) => {
@@ -204,6 +148,21 @@ const CombinationsPage: FC = () => {
     e.dataTransfer.dropEffect = 'copy';
   };
 
+  // Функции для переключения групп
+  const toggleTarotGroup = (title: string) => {
+    setOpenTarotGroups(prev => ({
+      ...prev,
+      [title]: !prev[title]
+    }));
+  };
+
+  const toggleLenormandGroup = () => {
+    setOpenLenormandGroups(prev => ({
+      ...prev,
+      "Колода Ленорман": !prev["Колода Ленорман"]
+    }));
+  };
+
   // Получаем все карты Таро одним массивом
   const allTarotCards = TARO_CARDS.flatMap(group => group.cards);
   const selectedTarotCardsData = selectedTarotCards
@@ -227,7 +186,7 @@ const CombinationsPage: FC = () => {
     return lenormandCombinations[key] || `Сочетание карт будет добавлено позже`;
   };
 
-  // Получаем количество выбранных карт Таро (не null)
+  // Получаем количество выбранных карт
   const selectedTarotCount = selectedTarotCards.filter(id => id !== null).length;
   const selectedLenormandCount = selectedLenormandCards.filter(id => id !== null).length;
 
@@ -236,10 +195,11 @@ const CombinationsPage: FC = () => {
       <Intro>
         <h1 className={styles.title}>СОЧЕТАНИЯ</h1>
       </Intro>
-
-              {/* Блок выбора карт Таро */}
+      
+      <div className={styles.wrapper}>
+        {/* ========== БЛОК СОЧЕТАНИЙ ТАРО ========== */}
         <div className={styles.selectionBlock}>
-          <div className={styles.selectionTitle}>ВЫБОР КАРТ</div>
+          <div className={styles.selectionTitle}>СОЧЕТАНИЯ ТАРО</div>
           
           {/* Три фиксированных слота для карт */}
           <div className={styles.selectedCards}>
@@ -254,10 +214,12 @@ const CombinationsPage: FC = () => {
                   onDragOver={onDragOver}
                 >
                   {card ? (
-                    <TarotCardWithRemove 
+                    <Card 
                       name={card.name} 
                       image={card.image} 
+                      link="" 
                       onRemove={() => removeTarotCard(index)}
+                      showRemoveButton={true}
                     />
                   ) : (
                     <div className={styles.cardBackTaro}></div>
@@ -267,17 +229,14 @@ const CombinationsPage: FC = () => {
             })}
           </div>
 
-          {/* Надпись ИЛИ */}
           <div className={styles.orDivider}>ИЛИ</div>
 
-          {/* Подсказка когда карты не выбраны */}
           {selectedTarotCount === 0 && (
             <div className={styles.hintText}>
               Нажмите или перетащите карты, чтобы увидеть сочетание
             </div>
           )}
 
-          {/* Комбинации карт Таро */}
           {selectedTarotCount >= 2 && (
             <div className={styles.combinationWrapper}>
               <div className={styles.combinationPair}>
@@ -330,33 +289,44 @@ const CombinationsPage: FC = () => {
             </div>
           )}
         </div>
-      
-      <div className={styles.wrapper}>
-        {/* ========== СЕКЦИЯ ТАРО ========== */}
+
+        {/* ========== КОЛОДА ТАРО С АККОРДЕОНОМ ========== */}
         <h2 className={styles.sectionTitle}>ТАРО</h2>
         
         {TARO_CARDS.map(({ title, cards }) => (
-          <div key={title}>
-            <h2 className={styles.cardsTitle}>{title}</h2>
-            <ul className={styles.cardsContainer}>
-              {cards.map(({ id, name, image }) => (
-                <div 
-                  key={id} 
-                  onClick={() => handleTarotSelect(id)}
-                  draggable
-                  onDragStart={onDragStart('tarot', id, name, image)}
-                  className={`${styles.cardWrapper} ${selectedTarotCards.includes(id) ? styles.selected : ''}`}
-                >
-                  <Card name={name} image={image} link="" />
-                </div>
-              ))}
-            </ul>
+          <div key={title} className={styles.groupContainer}>
+            <div 
+              className={styles.groupHeader}
+              onClick={() => toggleTarotGroup(title)}
+            >
+              <span>{title}</span>
+              <img 
+                src={rightArrow} 
+                alt="" 
+                className={`${styles.groupArrow} ${openTarotGroups[title] ? styles.groupArrowRotated : ''}`}
+              />
+            </div>
+            {openTarotGroups[title] && (
+              <ul className={styles.cardsContainer}>
+                {cards.map(({ id, name, image }) => (
+                  <div 
+                    key={id} 
+                    onClick={() => handleTarotSelect(id)}
+                    draggable
+                    onDragStart={onDragStart('tarot', id, name, image)}
+                    className={`${styles.cardWrapper} ${selectedTarotCards.includes(id) ? styles.selected : ''}`}
+                  >
+                    <Card name={name} image={image} link="" />
+                  </div>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
 
-                {/* Блок выбора карт Ленорман */}
+        {/* ========== БЛОК СОЧЕТАНИЙ ЛЕНОРМАН ========== */}
         <div className={styles.selectionBlock}>
-          <div className={styles.selectionTitle}>ВЫБОР КАРТ</div>
+          <div className={styles.selectionTitle}>СОЧЕТАНИЯ ЛЕНОРМАН</div>
           
           {/* Три фиксированных слота для карт */}
           <div className={styles.selectedCards}>
@@ -371,10 +341,13 @@ const CombinationsPage: FC = () => {
                   onDragOver={onDragOver}
                 >
                   {card ? (
-                    <LenormandCardWithRemove 
+                    <Card 
                       name={card.name} 
                       image={card.image} 
+                      link="" 
+                      borderColor="#ab760d"
                       onRemove={() => removeLenormandCard(index)}
+                      showRemoveButton={true}
                     />
                   ) : (
                     <div className={styles.cardBackLenormand}></div>
@@ -396,16 +369,18 @@ const CombinationsPage: FC = () => {
             <div className={styles.combinationWrapper}>
               <div className={styles.combinationPair}>
                 <div className={styles.combinationPairCards}>
-                  <LenormandCard 
+                  <Card 
                     name={selectedLenormandCardsData[0]?.name || ''} 
                     image={selectedLenormandCardsData[0]?.image || ''} 
-                     
+                    link="" 
+                    borderColor="#ab760d"
                   />
                   <span className={styles.plus}>+</span>
-                  <LenormandCard 
+                  <Card 
                     name={selectedLenormandCardsData[1]?.name || ''} 
                     image={selectedLenormandCardsData[1]?.image || ''} 
-                     
+                    link="" 
+                    borderColor="#ab760d"
                   />
                 </div>
                 <div className={styles.combinationText}>
@@ -419,15 +394,18 @@ const CombinationsPage: FC = () => {
               {selectedLenormandCount === 3 && (
                 <div className={styles.combinationPair}>
                   <div className={styles.combinationPairCards}>
-                    <LenormandCard 
+                    <Card 
                       name={selectedLenormandCardsData[1]?.name || ''} 
                       image={selectedLenormandCardsData[1]?.image || ''} 
-                      
+                      link="" 
+                      borderColor="#ab760d"
                     />
                     <span className={styles.plus}>+</span>
-                    <LenormandCard 
+                    <Card 
                       name={selectedLenormandCardsData[2]?.name || ''} 
-                      image={selectedLenormandCardsData[2]?.image || ''}  
+                      image={selectedLenormandCardsData[2]?.image || ''} 
+                      link="" 
+                      borderColor="#ab760d"
                     />
                   </div>
                   <div className={styles.combinationText}>
@@ -446,27 +424,41 @@ const CombinationsPage: FC = () => {
               Выберите вторую карту (нажмите или перетащите)
             </div>
           )}
+        </div>
 
-        {/* ========== СЕКЦИЯ ЛЕНОРМАН ========== */}
+        {/* ========== КОЛОДА ЛЕНОРМАН С АККОРДЕОНОМ ========== */}
         <h2 className={styles.sectionTitle}>ЛЕНОРМАН</h2>
         
-        <p className={styles.orderNote}>Порядок карт влияет на значение</p>
-        
-        <div>
-          <ul className={styles.cardsContainer}>
-            {LENORMAND_CARDS.map(({ id, name, image }) => (
-              <div 
-                key={id} 
-                onClick={() => handleLenormandSelect(id)}
-                draggable
-                onDragStart={onDragStart('lenormand', id, name, image)}
-                className={`${styles.cardWrapper} ${selectedLenormandCards.includes(id) ? styles.selected : ''}`}
-              >
-                <LenormandCard name={name} image={image} />
-              </div>
-            ))}
-          </ul>
-        </div>
+        <div className={styles.groupContainer}>
+          <div 
+            className={styles.groupHeader}
+            onClick={toggleLenormandGroup}
+          >
+            <span>Выбор карт</span>
+            <img 
+              src={rightArrow} 
+              alt="" 
+              className={`${styles.groupArrow} ${openLenormandGroups["Колода Ленорман"] ? styles.groupArrowRotated : ''}`}
+            />
+          </div>
+          {openLenormandGroups["Колода Ленорман"] && (
+            <>
+              <p className={styles.orderNote}>Порядок карт влияет на значение</p>
+              <ul className={styles.cardsContainer}>
+                {LENORMAND_CARDS.map(({ id, name, image }) => (
+                  <div 
+                    key={id} 
+                    onClick={() => handleLenormandSelect(id)}
+                    draggable
+                    onDragStart={onDragStart('lenormand', id, name, image)}
+                    className={`${styles.cardWrapper} ${selectedLenormandCards.includes(id) ? styles.selected : ''}`}
+                  >
+                    <Card name={name} image={image} link="" borderColor="#ab760d" />
+                  </div>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </div>
     </div>
