@@ -7,66 +7,51 @@ interface CardProps {
   image: string;
   link: string;
   borderColor?: string;
-  hasBack?: boolean;
-  backColor?: string;
   onRemove?: () => void;
   showRemoveButton?: boolean;
 }
 
-export const Card: FC<CardProps> = ({ 
-  name, 
-  image, 
-  link, 
+export const Card: FC<CardProps> = ({
+  name,
+  image,
+  link,
   borderColor,
-  hasBack = false,
-  backColor = "#AB760D",
   onRemove,
-  showRemoveButton = false
+  showRemoveButton = false,
 }) => {
   const content = (
-    <div className={`${styles.card} ${hasBack ? styles.cardWithBack : ''}`}>
+    <div className={`${styles.card}`}>
+      {/* Крестик */}
+      {showRemoveButton && onRemove && (
+        <button
+          className={styles.removeButton}
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+        >
+          ✕
+        </button>
+      )}
       {/* Блок с картинкой */}
-      <div className={styles.imageBlock}>
-        {/* Подложка */}
-        {hasBack && (
-          <div 
-            className={styles.cardBack} 
-            style={{ backgroundColor: backColor }}
-          />
-        )}
-        
-        {/* Рамка */}
-        {borderColor && (
-          <div 
-            className={styles.cardBorder} 
-            style={{ borderColor: borderColor }}
-          />
-        )}
-        
+      <div
+        className={`${styles.cardImage} ${borderColor ? styles.border : ""}`}
+        style={{ borderColor }}
+      >
         {/* Картинка */}
         <img src={image} alt={name} className={styles.cardImage} />
-        
-        {/* Крестик */}
-        {showRemoveButton && onRemove && (
-          <button 
-            className={styles.removeButton} 
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove();
-            }}
-          >
-            ✕
-          </button>
-        )}
       </div>
-      
-      {/* Название */}
+
       <div className={styles.cardName}>{name}</div>
     </div>
   );
 
   if (link) {
-    return <Link to={link} className={styles.link}>{content}</Link>;
+    return (
+      <Link to={link} className={styles.link}>
+        {content}
+      </Link>
+    );
   }
 
   return content;

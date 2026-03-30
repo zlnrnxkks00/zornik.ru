@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren } from "react";
 import styles from "./Intro.module.scss";
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export const Intro: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -19,7 +20,14 @@ export const Intro: FC<PropsWithChildren> = ({ children }) => {
         </nav>
       </header>
 
-      <div className={styles.content}>{children}</div>
+      <motion.div
+        className={styles.content}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        {children}
+      </motion.div>
     </section>
   );
 };

@@ -57,15 +57,12 @@
   font-size: 36px;
   line-height: 100%;
   color: var(--cl-text);
-  gap: 30px
-  transition all 0.3s ease;
-  
-
+  gap: 30px transition all 0.3s ease;
 
   &:hover {
     opacity: 0.8;
   }
-  
+
   &.open {
     font-weight: 700;
   }
@@ -79,8 +76,7 @@
 .arrow {
   width: 24px;
   height: 24px;
-  transition: transform 0.3s ease;
-  
+
   &.arrowRotated {
     transform: rotate(90deg);
   }
@@ -90,7 +86,7 @@
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--cl-border);
-  
+
   p {
     font-family: Montserrat;
     font-weight: 300;
@@ -105,7 +101,7 @@
 .notFound {
   text-align: center;
   padding: 40px 0;
-  
+
   h2 {
     font-family: Montserrat;
     font-size: 32px;
@@ -131,15 +127,15 @@
     font-size: 32px;
     margin-bottom: 40px;
   }
-  
+
   .accordionHeader {
     font-size: 24px;
   }
-  
+
   .accordionContent p {
     font-size: 20px;
   }
-  
+
   .accordionContainer {
     gap: 40px;
   }

@@ -30,14 +30,24 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, 161px);
   column-gap: 30px;
+  justify-content: center;
   row-gap: 17px;
 }
 
 @include responsive(screen) {
+  .title {
+    font-size: 80px;
+  }
 }
 
 @include responsive(tablet) {
+  .title {
+    font-size: 56px;
+  }
 }
 
 @include responsive(phone) {
+  .title {
+    font-size: 36px;
+  }
 }
