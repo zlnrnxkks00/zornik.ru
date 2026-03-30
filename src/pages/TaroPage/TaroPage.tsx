@@ -3,6 +3,7 @@ import styles from "./TaroPage.module.scss";
 import { TARO_CARDS } from "../../constants/taro-cards";
 import { Card } from "../../components/Card/Card";
 import { Intro } from "../../components/Intro/Intro";
+import { motion } from "framer-motion";
 
 const TaroPage: FC = () => {
   return (
@@ -15,11 +16,29 @@ const TaroPage: FC = () => {
           <div key={title}>
             <h2 className={styles.cardsTitle}>{title}</h2>
 
-            <ul className={styles.cardsContainer}>
+            <motion.ul
+              className={styles.cardsContainer}
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.06 } },
+              }}
+            >
               {cards.map(({ id, name, image }) => (
-                <Card key={id} name={name} image={image} link={`/taro/${id}`} />
+                <motion.li
+                  key={id}
+                  variants={{
+                    hidden: { opacity: 0, y: 12 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+                  }}
+                  whileHover={{ y: -6, scale: 1.02 }}
+                  style={{ listStyle: "none" }}
+                >
+                  <Card name={name} image={image} link={`/taro/${id}`} />
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           </div>
         ))}
       </div>

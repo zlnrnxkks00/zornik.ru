@@ -2,10 +2,10 @@ import { TCard, TTypeCardTaro } from "../types";
 
 import shut_0 from "../assets/taro/0_fool.png";
 import magician_1 from "../assets/taro/1_magician.png";
-import high_priestess_2 from "../assets/taro/2_high_priestess.png"
-import imperatritsa_3 from "../assets/taro/3_imperatritsa.png"
-import imperator_4 from "../assets/taro/4_imperator.png"
-import hierophant_5 from "../assets/taro/5_hierophant.png"
+import high_priestess_2 from "../assets/taro/2_high_priestess.png";
+import imperatritsa_3 from "../assets/taro/3_imperatritsa.png";
+import imperator_4 from "../assets/taro/4_imperator.png";
+import hierophant_5 from "../assets/taro/5_hierophant.png";
 import lovers_6 from "../assets/taro/6_lovers.png";
 import kolestnitsa_7 from "../assets/taro/7_kolesnitsa.png";
 import sila_8 from "../assets/taro/8_sila.png";
@@ -83,8 +83,6 @@ import knight_wands from "../assets/taro/knight_wands.png";
 import queen_wands from "../assets/taro/queen_wands.png";
 import king_wands from "../assets/taro/king_wands.png";
 
-
-
 export const TARO_CARDS: { title: TTypeCardTaro; cards: TCard[] }[] = [
   {
     title: "Старшие арканы",
@@ -105,7 +103,7 @@ export const TARO_CARDS: { title: TTypeCardTaro; cards: TCard[] }[] = [
       { id: 13, name: "Смерть", image: death_13 },
       { id: 14, name: "Умеренность", image: temperance_14 },
       { id: 15, name: "Дьявол", image: devil_15 },
-      { id: 16, name: "Башня", image: tower_16},
+      { id: 16, name: "Башня", image: tower_16 },
       { id: 17, name: "Звезда", image: star_17 },
       { id: 18, name: "Луна", image: moon_18 },
       { id: 19, name: "Солнце", image: sun_19 },
@@ -131,7 +129,7 @@ export const TARO_CARDS: { title: TTypeCardTaro; cards: TCard[] }[] = [
       { id: 76, name: "Королева жезлов", image: queen_wands },
       { id: 77, name: "Король жезлов", image: king_wands },
     ],
- },
+  },
   {
     title: "Кубки",
     cards: [
@@ -151,7 +149,7 @@ export const TARO_CARDS: { title: TTypeCardTaro; cards: TCard[] }[] = [
       { id: 35, name: "Король кубков", image: king_cups },
     ],
   },
-    {
+  {
     title: "Мечи",
     cards: [
       { id: 50, name: "Туз мечей", image: ace_swords },

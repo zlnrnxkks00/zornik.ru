@@ -37,17 +37,28 @@
 }
 .cardsContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 140px);
+  grid-template-columns: repeat(auto-fill, 160px);
   column-gap: 30px;
+  justify-content: center;
   row-gap: 17px;
+
   margin-bottom: 70px;
 }
 
 @include responsive(screen) {
+  .title {
+    font-size: 90px;
+  }
 }
 
 @include responsive(tablet) {
+  .title {
+    font-size: 60px;
+  }
 }
 
 @include responsive(phone) {
+  .title {
+    font-size: 36px;
+  }
 }

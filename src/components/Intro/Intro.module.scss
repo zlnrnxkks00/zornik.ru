@@ -84,7 +84,24 @@
 }
 
 @include responsive(tablet) {
+  .intro {
+    background: url("../../assets/intro_bg_mobile.png") no-repeat center center;
+    background-color: var(--cl-black);
+    background-size: contain;
+    min-height: 863px;
+  }
+
+  .intro::after {
+    display: none;
+  }
+
+  .intro::before {
+    display: none;
+  }
 }
 
 @include responsive(phone) {
+  .intro {
+    background-size: cover;
+  }
 }
