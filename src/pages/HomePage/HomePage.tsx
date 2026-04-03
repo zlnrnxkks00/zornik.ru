@@ -19,8 +19,8 @@ const HomePage: FC = () => {
       setIsMobile(window.innerWidth <= 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -57,8 +57,8 @@ const HomePage: FC = () => {
       </video>
 
       {/* Бургер-кнопка для мобильных устройств */}
-      <button 
-        className={`${styles.burger} ${isMenuOpen ? styles.burgerOpen : ''}`} 
+      <button
+        className={`${styles.burger} ${isMenuOpen ? styles.burgerOpen : ""}`}
         onClick={toggleMenu}
         aria-label="Меню"
       >
@@ -70,30 +70,27 @@ const HomePage: FC = () => {
       {/* Мобильное меню */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.nav 
+          <motion.nav
             className={styles.navMobile}
-            initial={{ x: '100%' }}
+            initial={{ x: "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: '100%' }}
+            exit={{ x: "100%" }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <div className={styles.navMobileContent}>
-              <button 
-                className={styles.mobileMenuButton} 
+              <button
+                className={styles.mobileMenuButton}
                 onClick={() => handleNavigation("/lenormand")}
               >
                 ЛЕНОРМАН
               </button>
               <img src={starIcon} alt="" className={styles.mobileStar} />
-              <button 
-                className={styles.mobileMenuButton} 
-                onClick={() => handleNavigation("/taro")}
-              >
+              <button className={styles.mobileMenuButton} onClick={() => handleNavigation("/taro")}>
                 ТАРО
               </button>
               <img src={starIcon} alt="" className={styles.mobileStar} />
-              <button 
-                className={styles.mobileMenuButton} 
+              <button
+                className={styles.mobileMenuButton}
                 onClick={() => handleNavigation("/combinations")}
               >
                 СОЧЕТАНИЯ
@@ -113,10 +110,7 @@ const HomePage: FC = () => {
 
           {/* Надпись ZORNIK - на мобильных всегда видна */}
           {(animationStage === "title" || isMobile) && (
-            <div 
-              className={`${styles.titleText} ${isMobile ? styles.titleTextMobile : ''}`}
-              onClick={handleAnimationClick}
-            >
+            <div className={`${styles.titleText} ${isMobile ? styles.titleTextMobile : ""}`}>
               ZORNIK
             </div>
           )}

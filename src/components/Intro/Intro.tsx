@@ -19,8 +19,8 @@ export const Intro: FC<PropsWithChildren> = ({ children }) => {
     <section className={styles.intro}>
       <header className={styles.header}>
         {/* Бургер-кнопка для мобильных устройств */}
-        <button 
-          className={`${styles.burger} ${isMenuOpen ? styles.burgerOpen : ''}`} 
+        <button
+          className={`${styles.burger} ${isMenuOpen ? styles.burgerOpen : ""}`}
           onClick={toggleMenu}
           aria-label="Меню"
         >
@@ -45,35 +45,23 @@ export const Intro: FC<PropsWithChildren> = ({ children }) => {
         {/* Мобильное меню */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.nav 
+            <motion.nav
               className={styles.navMobile}
-              initial={{ x: '100%' }}
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              exit={{ x: "100%" }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               <div className={styles.navMobileContent}>
-                <NavLink 
-                  className={styles.mobileLink} 
-                  to="/lenormand" 
-                  onClick={closeMenu}
-                >
+                <NavLink className={styles.mobileLink} to="/lenormand" onClick={closeMenu}>
                   Ленорман
                 </NavLink>
                 <img src={starIcon} alt="" className={styles.mobileStar} />
-                <NavLink 
-                  className={styles.mobileLink} 
-                  to="/taro" 
-                  onClick={closeMenu}
-                >
+                <NavLink className={styles.mobileLink} to="/taro" onClick={closeMenu}>
                   Таро
                 </NavLink>
                 <img src={starIcon} alt="" className={styles.mobileStar} />
-                <NavLink 
-                  className={styles.mobileLink} 
-                  to="/combinations" 
-                  onClick={closeMenu}
-                >
+                <NavLink className={styles.mobileLink} to="/combinations" onClick={closeMenu}>
                   Сочетания
                 </NavLink>
               </div>
