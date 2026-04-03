@@ -42,6 +42,13 @@ const HomePage: FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Обработчик клика по анимации (открывает бургер-меню на мобильных)
+  const handleAnimationClick = () => {
+    if (isMobile) {
+      toggleMenu();
+    }
+  };
+
   return (
     <div className={styles.page}>
       {/* Видео фон */}
@@ -98,12 +105,18 @@ const HomePage: FC = () => {
 
       {/* Контент */}
       <div className={styles.content}>
-        <div className={styles.circle}>
+        <div 
+          className={`${styles.circle} ${isMobile ? styles.circleClickable : ''}`}
+          onClick={handleAnimationClick}
+        >
           <img src={introBg} alt="" className={styles.circleBg} />
 
           {/* Надпись ZORNIK - на мобильных всегда видна */}
           {(animationStage === "title" || isMobile) && (
-            <div className={`${styles.titleText} ${isMobile ? styles.titleTextMobile : ''}`}>
+            <div 
+              className={`${styles.titleText} ${isMobile ? styles.titleTextMobile : ''}`}
+              onClick={handleAnimationClick}
+            >
               ZORNIK
             </div>
           )}
