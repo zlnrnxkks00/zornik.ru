@@ -10,6 +10,17 @@
   --cl-text: #fbe5d8;
 }
 
+.card-hover-effect {
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.05);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);;
+  }
+}
+
 * {
   font-family: "Montserrat", sans-serif;
 }
