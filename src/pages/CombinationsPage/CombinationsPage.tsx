@@ -227,6 +227,7 @@ const CombinationsPage: FC = () => {
                     <Card
                       name={card.name}
                       image={card.image}
+                      hover={false}
                       link=""
                       onRemove={() => removeTarotCard(index)}
                       showRemoveButton={true}
@@ -252,11 +253,13 @@ const CombinationsPage: FC = () => {
                   <Card
                     name={selectedTarotCardsData[0]?.name || ""}
                     image={selectedTarotCardsData[0]?.image || ""}
+                    hover={false}
                     link=""
                   />
                   <span className={styles.plus}>+</span>
                   <Card
                     name={selectedTarotCardsData[1]?.name || ""}
+                    hover={false}
                     image={selectedTarotCardsData[1]?.image || ""}
                     link=""
                   />
@@ -283,11 +286,13 @@ const CombinationsPage: FC = () => {
                       <Card
                         name={selectedTarotCardsData[1]?.name || ""}
                         image={selectedTarotCardsData[1]?.image || ""}
+                        hover={false}
                         link=""
                       />
                       <span className={styles.plus}>+</span>
                       <Card
                         name={selectedTarotCardsData[2]?.name || ""}
+                        hover={false}
                         image={selectedTarotCardsData[2]?.image || ""}
                         link=""
                       />
@@ -365,6 +370,7 @@ const CombinationsPage: FC = () => {
                     <Card
                       name={card.name}
                       image={card.image}
+                      hover={false}
                       link=""
                       borderColor="#ab760d"
                       onRemove={() => removeLenormandCard(index)}
@@ -393,6 +399,7 @@ const CombinationsPage: FC = () => {
                     image={selectedLenormandCardsData[0]?.image || ""}
                     link=""
                     borderColor="#ab760d"
+                    hover={false}
                   />
                   <span className={styles.plus}>+</span>
                   <Card
@@ -400,6 +407,7 @@ const CombinationsPage: FC = () => {
                     image={selectedLenormandCardsData[1]?.image || ""}
                     link=""
                     borderColor="#ab760d"
+                    hover={false}
                   />
                 </div>
                 <div className={styles.combinationText}>
@@ -426,6 +434,7 @@ const CombinationsPage: FC = () => {
                         image={selectedLenormandCardsData[1]?.image || ""}
                         link=""
                         borderColor="#ab760d"
+                        hover={false}
                       />
                       <span className={styles.plus}>+</span>
                       <Card
@@ -433,6 +442,7 @@ const CombinationsPage: FC = () => {
                         image={selectedLenormandCardsData[2]?.image || ""}
                         link=""
                         borderColor="#ab760d"
+                        hover={false}
                       />
                     </div>
                     <div className={styles.combinationText}>

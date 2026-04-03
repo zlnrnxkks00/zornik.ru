@@ -9,6 +9,7 @@ interface CardProps {
   borderColor?: string;
   onRemove?: () => void;
   showRemoveButton?: boolean;
+  hover?: boolean;
 }
 
 export const Card: FC<CardProps> = ({
@@ -17,10 +18,11 @@ export const Card: FC<CardProps> = ({
   link,
   borderColor,
   onRemove,
+  hover = true,
   showRemoveButton = false,
 }) => {
   const content = (
-    <div className={`${styles.card}`}>
+    <div className={`${styles.card} ${hover ? styles.hover : ""}`}>
       {/* Крестик */}
       {showRemoveButton && onRemove && (
         <button
