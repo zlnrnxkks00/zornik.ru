@@ -1,8 +1,8 @@
-import { FC, PropsWithChildren, useState } from "react";
+import { FC, PropsWithChildren, useState, useEffect } from "react";
 import styles from "./Intro.module.scss";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import starIcon from "../../assets/other elements/star.png";
+import starIcon from "../../assets/other_elements/star.png";
 
 export const Intro: FC<PropsWithChildren> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +14,13 @@ export const Intro: FC<PropsWithChildren> = ({ children }) => {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
 
   return (
     <section className={styles.intro}>

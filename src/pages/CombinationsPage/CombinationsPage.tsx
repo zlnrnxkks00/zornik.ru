@@ -4,7 +4,7 @@ import { TARO_CARDS } from "../../constants/taro-cards";
 import { LENORMAND_CARDS } from "../../constants/lenormand-cards";
 import { Card } from "../../components/Card/Card";
 import { Intro } from "../../components/Intro/Intro";
-import rightArrow from "../../assets/other elements/right.png";
+import rightArrow from "../../assets/other_elements/right.png";
 
 // Временные данные для сочетаний
 const tarotCombinations: Record<string, string> = {

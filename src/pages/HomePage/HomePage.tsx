@@ -2,8 +2,8 @@ import { FC, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./HomePage.module.scss";
 import introBg from "../../assets/intro_bg.png";
-import starIcon from "../../assets/other elements/star.png";
-import videoStars from "../../assets/other elements/video_stars.mp4";
+import starIcon from "../../assets/other_elements/star.png";
+import videoStars from "../../assets/other_elements/video_stars.mp4";
 import { motion, AnimatePresence } from "framer-motion";
 
 const HomePage: FC = () => {
@@ -12,6 +12,27 @@ const HomePage: FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const tryPlay = () => {
+      video.play().catch(() => {});
+    };
+
+    // Запускаем сразу и при событии canplay (Safari ждёт готовности буфера)
+    tryPlay();
+    video.addEventListener("canplay", tryPlay);
+
+    // Запасной вариант: первое касание/клик (iOS в режиме энергосбережения)
+    document.addEventListener("touchstart", tryPlay, { once: true });
+
+    return () => {
+      video.removeEventListener("canplay", tryPlay);
+      document.removeEventListener("touchstart", tryPlay);
+    };
+  }, []);
 
   useEffect(() => {
     // Проверяем, мобильное ли устройство
@@ -52,7 +73,17 @@ const HomePage: FC = () => {
   return (
     <div className={styles.page}>
       {/* Видео фон */}
-      <video ref={videoRef} className={styles.video} autoPlay muted loop playsInline>
+      <video
+        ref={videoRef}
+        className={styles.video}
+        autoPlay={true}
+        muted={true}
+        loop={true}
+        playsInline={true}
+        x-webkit-airplay="allow"
+        preload="auto"
+        disablePictureInPicture
+      >
         <source src={videoStars} type="video/mp4" />
       </video>
 
@@ -102,8 +133,8 @@ const HomePage: FC = () => {
 
       {/* Контент */}
       <div className={styles.content}>
-        <div 
-          className={`${styles.circle} ${isMobile ? styles.circleClickable : ''}`}
+        <div
+          className={`${styles.circle} ${isMobile ? styles.circleClickable : ""}`}
           onClick={handleAnimationClick}
         >
           <img src={introBg} alt="" className={styles.circleBg} />

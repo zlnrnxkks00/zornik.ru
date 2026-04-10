@@ -97,7 +97,16 @@
     text-align: center;
     color: var(--cl-text);
     margin: 0;
+    white-space: pre-line;
   }
+}
+
+.loading {
+  font-family: Montserrat;
+  font-weight: 300;
+  font-size: 36px;
+  text-align: center;
+  color: var(--cl-text);
 }
 
 .notFound {
@@ -119,9 +128,57 @@
 }
 
 @include responsive(screen) {
+  .wrapper {
+    padding: 50px 20px 100px;
+  }
+
+  .cardTitle {
+    font-size: 40px;
+    margin-bottom: 60px;
+  }
+
+  .accordionHeader {
+    font-size: 30px;
+  }
+
+  .accordionContent p {
+    font-size: 30px;
+  }
+
+  .accordionContainer {
+    gap: 50px;
+  }
+
+  .loading {
+    font-size: 30px;
+  }
 }
 
 @include responsive(tablet) {
+  .wrapper {
+    padding: 40px 16px 80px;
+  }
+
+  .cardTitle {
+    font-size: 36px;
+    margin-bottom: 50px;
+  }
+
+  .accordionHeader {
+    font-size: 28px;
+  }
+
+  .accordionContent p {
+    font-size: 24px;
+  }
+
+  .accordionContainer {
+    gap: 44px;
+  }
+
+  .loading {
+    font-size: 28px;
+  }
 }
 
 @include responsive(phone) {
