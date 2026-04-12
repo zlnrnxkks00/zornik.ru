@@ -7,6 +7,7 @@ import rightArrow from "../../assets/other_elements/right.png";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchLenormandCard } from "../../api/api";
 import type { LenormandCardData } from "../../types";
+import { Notify, TStatusNotify } from "../../components/Notify/Notify";
 
 interface AccordionItem {
   title: string;
@@ -37,17 +38,38 @@ const LenormandCardPage: FC = () => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [cardData, setCardData] = useState<LenormandCardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [notify, setNotify] = useState<{
+    open: boolean;
+    status: TStatusNotify;
+    text: string;
+  }>({ open: false, status: "error", text: "" });
 
   const card = LENORMAND_CARDS.find(({ id: currentId }) => currentId === cardId);
 
   useEffect(() => {
     let active = true;
-    fetchLenormandCard(cardId).then((data) => {
-      if (active) {
-        setCardData(data);
-        setLoading(false);
-      }
-    });
+    fetchLenormandCard(cardId)
+      .then((data) => {
+        if (active) {
+          setCardData(data);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        if (active) {
+          setLoading(false);
+          if (error instanceof DOMException && error.name === "TimeoutError") {
+            setNotify({
+              open: true,
+              status: "warning",
+              text: "Проблемы с сетью, попробуйте позже",
+            });
+          } else {
+            console.error("[LenormandCardPage] Не удалось загрузить данные карты:", error);
+            setNotify({ open: true, status: "error", text: "Не удалось загрузить данные карты" });
+          }
+        }
+      });
     return () => {
       active = false;
     };
@@ -125,6 +147,14 @@ const LenormandCardPage: FC = () => {
           </div>
         )}
       </div>
+
+      <Notify
+        status={notify.status}
+        open={notify.open}
+        setOpen={(open) => setNotify((prev) => ({ ...prev, open }))}
+        title="Ошибка"
+        text={notify.text}
+      />
     </div>
   );
 };

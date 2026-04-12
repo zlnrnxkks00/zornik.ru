@@ -57,7 +57,9 @@
 
 .cardWrapper {
   cursor: pointer;
-  transition: transform 0.2s;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
 
   &:hover {
     transform: translateY(-4px);
@@ -67,6 +69,8 @@
     outline: 3px solid var(--cl-primary);
     outline-offset: 4px;
     border-radius: 8px;
+    opacity: 0.5;
+    pointer-events: none;
   }
 }
 

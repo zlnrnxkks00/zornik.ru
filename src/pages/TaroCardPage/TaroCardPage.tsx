@@ -7,6 +7,7 @@ import rightArrow from "../../assets/other_elements/right.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchTaroCard } from "../../api/api";
 import type { TaroCardData } from "../../types";
+import { Notify, TStatusNotify } from "../../components/Notify/Notify";
 
 interface AccordionItem {
   title: string;
@@ -41,6 +42,11 @@ const TaroCardPage: FC = () => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [cardData, setCardData] = useState<TaroCardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [notify, setNotify] = useState<{
+    open: boolean;
+    status: TStatusNotify;
+    text: string;
+  }>({ open: false, status: "error", text: "" });
 
   const card = TARO_CARDS.flatMap(({ cards }) => cards).find(
     ({ id: currentId }) => currentId === cardId
@@ -48,12 +54,28 @@ const TaroCardPage: FC = () => {
 
   useEffect(() => {
     let active = true;
-    fetchTaroCard(cardId).then((data) => {
-      if (active) {
-        setCardData(data);
-        setLoading(false);
-      }
-    });
+    fetchTaroCard(cardId)
+      .then((data) => {
+        if (active) {
+          setCardData(data);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error("[TaroCardPage] Ошибка загрузки карты:", error);
+        if (active) {
+          setLoading(false);
+          if (error instanceof DOMException && error.name === "TimeoutError") {
+            setNotify({
+              open: true,
+              status: "warning",
+              text: "Проблемы с сетью, попробуйте позже",
+            });
+          } else {
+            setNotify({ open: true, status: "error", text: "Не удалось загрузить данные карты" });
+          }
+        }
+      });
     return () => {
       active = false;
     };
@@ -131,6 +153,14 @@ const TaroCardPage: FC = () => {
           </div>
         )}
       </div>
+
+      <Notify
+        status={notify.status}
+        open={notify.open}
+        setOpen={(open) => setNotify((prev) => ({ ...prev, open }))}
+        title="Ошибка"
+        text={notify.text}
+      />
     </div>
   );
 };

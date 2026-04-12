@@ -39,3 +39,14 @@ export interface LenormandCardData {
 export interface LenormandCardResponse {
   data: Record<string, LenormandCardData>;
 }
+
+export interface CombinationItem {
+  text: string;
+}
+
+export interface CombinationResponse {
+  data: {
+    combination: CombinationItem[];
+  };
+  message: string;
+}
