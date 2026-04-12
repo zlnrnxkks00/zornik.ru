@@ -1,25 +1,12 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect, useCallback } from "react";
 import styles from "./CombinationsPage.module.scss";
 import { TARO_CARDS } from "../../constants/taro-cards";
 import { LENORMAND_CARDS } from "../../constants/lenormand-cards";
 import { Card } from "../../components/Card/Card";
 import { Intro } from "../../components/Intro/Intro";
 import rightArrow from "../../assets/other_elements/right.png";
-
-// Временные данные для сочетаний
-const tarotCombinations: Record<string, string> = {
-  "0_1": "Дурак + Маг: Начало нового пути с четким планом и уверенностью",
-  "1_2": "Маг + Верховная Жрица: Интуитивное действие, магия, тайные знания",
-  "0_2": "Дурак + Верховная Жрица: Доверие интуиции в новой ситуации",
-  "0_1_2": "Дурак + Маг + Верховная Жрица: Новое начало с верой, действием и интуицией",
-};
-
-const lenormandCombinations: Record<string, string> = {
-  "0_1": "Всадник + Клевер: Приятные новости, удачное стечение обстоятельств",
-  "1_2": "Клевер + Корабль: Удача в путешествии, хорошая поездка",
-  "0_2": "Всадник + Корабль: Новости издалека, приезд гостей",
-  "0_1_2": "Всадник + Клевер + Корабль: Счастливое путешествие, хорошие новости издалека",
-};
+import { fetchCombination } from "../../api/api";
+import { Notify, TStatusNotify } from "../../components/Notify/Notify";
 
 interface DragData {
   type: "tarot" | "lenormand";
@@ -49,6 +36,30 @@ const CombinationsPage: FC = () => {
   const [openLenormandGroups, setOpenLenormandGroups] = useState<Record<string, boolean>>({
     "Колода Ленорман": true,
   });
+
+  // Результаты API для сочетаний
+  const [tarotCombResult, setTarotCombResult] = useState<{
+    pair1: string[] | null;
+    pair2: string[] | null;
+  }>({ pair1: null, pair2: null });
+  const [lenormandCombResult, setLenormandCombResult] = useState<{
+    pair1: string[] | null;
+    pair2: string[] | null;
+  }>({ pair1: null, pair2: null });
+  const [tarotLoading, setTarotLoading] = useState(false);
+  const [lenormandLoading, setLenormandLoading] = useState(false);
+
+  // Уведомления
+  const [notify, setNotify] = useState<{
+    open: boolean;
+    status: TStatusNotify;
+    title: string;
+    text: string;
+  }>({ open: false, status: "error", title: "", text: "" });
+
+  const showNotify = (status: TStatusNotify, title: string, text: string) => {
+    setNotify({ open: true, status, title, text });
+  };
 
   // Удаление карты Таро по индексу
   const removeTarotCard = (index: number) => {
@@ -184,17 +195,69 @@ const CombinationsPage: FC = () => {
     .map((id) => (id !== null ? LENORMAND_CARDS.find((card) => card.id === id) : null))
     .filter((card) => card !== null);
 
-  // Получаем описание для комбинации Таро
-  const getTarotCombinationText = (card1Id: number, card2Id: number) => {
-    const key = `${card1Id}_${card2Id}`;
-    return tarotCombinations[key] || `Сочетание карт будет добавлено позже`;
-  };
+  // Загрузка сочетаний Таро
+  const loadTarotCombinations = useCallback(async () => {
+    const ids = selectedTarotCards.filter((id): id is number => id !== null);
+    if (ids.length < 2) {
+      setTarotCombResult({ pair1: null, pair2: null });
+      return;
+    }
+    setTarotLoading(true);
+    try {
+      const pair1 = await fetchCombination("taro", [ids[0], ids[1]]);
+      let pair2: string[] | null = null;
+      if (ids.length === 3) {
+        pair2 = await fetchCombination("taro", [ids[1], ids[2]]);
+      }
+      setTarotCombResult({ pair1, pair2 });
+    } catch (error) {
+      console.error("[CombinationsPage] Ошибка загрузки сочетаний Таро:", error);
+      setTarotCombResult({ pair1: null, pair2: null });
+      if (error instanceof DOMException && error.name === "TimeoutError") {
+        showNotify("warning", "Таро", "Сервер не отвечает, попробуйте позже");
+      } else {
+        showNotify("error", "Таро", "Не удалось загрузить сочетание карт");
+      }
+    } finally {
+      setTarotLoading(false);
+    }
+  }, [selectedTarotCards]);
 
-  // Получаем описание для комбинации Ленорман
-  const getLenormandCombinationText = (card1Id: number, card2Id: number) => {
-    const key = `${card1Id}_${card2Id}`;
-    return lenormandCombinations[key] || `Сочетание карт будет добавлено позже`;
-  };
+  useEffect(() => {
+    loadTarotCombinations();
+  }, [loadTarotCombinations]);
+
+  // Загрузка сочетаний Ленорман
+  const loadLenormandCombinations = useCallback(async () => {
+    const ids = selectedLenormandCards.filter((id): id is number => id !== null);
+    if (ids.length < 2) {
+      setLenormandCombResult({ pair1: null, pair2: null });
+      return;
+    }
+    setLenormandLoading(true);
+    try {
+      const pair1 = await fetchCombination("lenormand", [ids[0], ids[1]]);
+      let pair2: string[] | null = null;
+      if (ids.length === 3) {
+        pair2 = await fetchCombination("lenormand", [ids[1], ids[2]]);
+      }
+      setLenormandCombResult({ pair1, pair2 });
+    } catch (error) {
+      console.error("[CombinationsPage] Ошибка загрузки сочетаний Ленорман:", error);
+      setLenormandCombResult({ pair1: null, pair2: null });
+      if (error instanceof DOMException && error.name === "TimeoutError") {
+        showNotify("warning", "Ленорман", "Сервер не отвечает, попробуйте позже");
+      } else {
+        showNotify("error", "Ленорман", "Не удалось загрузить сочетание карт");
+      }
+    } finally {
+      setLenormandLoading(false);
+    }
+  }, [selectedLenormandCards]);
+
+  useEffect(() => {
+    loadLenormandCombinations();
+  }, [loadLenormandCombinations]);
 
   // Получаем количество выбранных карт
   const selectedTarotCount = selectedTarotCards.filter((id) => id !== null).length;
@@ -268,12 +331,13 @@ const CombinationsPage: FC = () => {
                   <strong>
                     {selectedTarotCardsData[0]?.name} + {selectedTarotCardsData[1]?.name}
                   </strong>
-                  <p>
-                    {getTarotCombinationText(
-                      selectedTarotCardsData[0]?.id || 0,
-                      selectedTarotCardsData[1]?.id || 0
-                    )}
-                  </p>
+                  {tarotLoading ? (
+                    <p>Загрузка...</p>
+                  ) : tarotCombResult.pair1 ? (
+                    tarotCombResult.pair1.map((text, i) => <p key={i}>{text}</p>)
+                  ) : (
+                    <p>Не удалось загрузить сочетание</p>
+                  )}
                 </div>
               </div>
 
@@ -301,12 +365,13 @@ const CombinationsPage: FC = () => {
                       <strong>
                         {selectedTarotCardsData[1]?.name} + {selectedTarotCardsData[2]?.name}
                       </strong>
-                      <p>
-                        {getTarotCombinationText(
-                          selectedTarotCardsData[1]?.id || 0,
-                          selectedTarotCardsData[2]?.id || 0
-                        )}
-                      </p>
+                      {tarotLoading ? (
+                        <p>Загрузка...</p>
+                      ) : tarotCombResult.pair2 ? (
+                        tarotCombResult.pair2.map((text, i) => <p key={i}>{text}</p>)
+                      ) : (
+                        <p>Не удалось загрузить сочетание</p>
+                      )}
                     </div>
                   </div>
                 </>
@@ -414,12 +479,13 @@ const CombinationsPage: FC = () => {
                   <strong>
                     {selectedLenormandCardsData[0]?.name} + {selectedLenormandCardsData[1]?.name}
                   </strong>
-                  <p>
-                    {getLenormandCombinationText(
-                      selectedLenormandCardsData[0]?.id || 0,
-                      selectedLenormandCardsData[1]?.id || 0
-                    )}
-                  </p>
+                  {lenormandLoading ? (
+                    <p>Загрузка...</p>
+                  ) : lenormandCombResult.pair1 ? (
+                    lenormandCombResult.pair1.map((text, i) => <p key={i}>{text}</p>)
+                  ) : (
+                    <p>Не удалось загрузить сочетание</p>
+                  )}
                 </div>
               </div>
 
@@ -450,12 +516,13 @@ const CombinationsPage: FC = () => {
                         {selectedLenormandCardsData[1]?.name} +{" "}
                         {selectedLenormandCardsData[2]?.name}
                       </strong>
-                      <p>
-                        {getLenormandCombinationText(
-                          selectedLenormandCardsData[1]?.id || 0,
-                          selectedLenormandCardsData[2]?.id || 0
-                        )}
-                      </p>
+                      {lenormandLoading ? (
+                        <p>Загрузка...</p>
+                      ) : lenormandCombResult.pair2 ? (
+                        lenormandCombResult.pair2.map((text, i) => <p key={i}>{text}</p>)
+                      ) : (
+                        <p>Не удалось загрузить сочетание</p>
+                      )}
                     </div>
                   </div>
                 </>
@@ -500,6 +567,14 @@ const CombinationsPage: FC = () => {
           )}
         </div>
       </div>
+
+      <Notify
+        status={notify.status}
+        open={notify.open}
+        setOpen={(open) => setNotify((prev) => ({ ...prev, open }))}
+        title={notify.title}
+        text={notify.text}
+      />
     </div>
   );
 };
