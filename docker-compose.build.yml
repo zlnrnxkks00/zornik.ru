@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: arsernst/zornik:latest
+    build:
+      context: ./ 
+      dockerfile: Dockerfile
+
+
