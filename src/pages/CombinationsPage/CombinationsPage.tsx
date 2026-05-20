@@ -1,55 +1,44 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { FC, useState, useEffect } from "react";
 import styles from "./CombinationsPage.module.scss";
 import { TARO_CARDS } from "../../constants/taro-cards";
 import { LENORMAND_CARDS } from "../../constants/lenormand-cards";
-import { Card } from "../../components/Card/Card";
-import { Intro } from "../../components/Intro/Intro";
-import rightArrow from "../../assets/other_elements/right.png";
+import { motion, AnimatePresence } from "framer-motion";
+import combinationIconLeft from "../../assets/comination_icon_left.svg";
+import combinationIconRight from "../../assets/comination_icon_right.svg";
+import emptyCardSvg from "../../assets/empry_card.svg";
 import { fetchCombination } from "../../api/api";
 import { Notify, TStatusNotify } from "../../components/Notify/Notify";
+import lineIcon from "../../assets/line.svg";
+type TabType = "taro" | "lenormand";
 
-interface DragData {
-  type: "tarot" | "lenormand";
+interface SelectedCardData {
+  type: TabType;
   id: number;
   name: string;
   image: string;
 }
 
-const CombinationsPage: FC = () => {
-  const [selectedTarotCards, setSelectedTarotCards] = useState<(number | null)[]>([
-    null,
-    null,
-    null,
-  ]);
-  const [selectedLenormandCards, setSelectedLenormandCards] = useState<(number | null)[]>([
-    null,
-    null,
-    null,
-  ]);
+interface CombinationResult {
+  key: string;
+  text: string[] | null;
+}
 
-  // Состояние для открытых групп Таро
+const CombinationsPage: FC = () => {
+  const [selectedCards, setSelectedCards] = useState<(SelectedCardData | null)[]>([
+    null,
+    null,
+    null,
+  ]);
+  const [activeSlot, setActiveSlot] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>("taro");
   const [openTarotGroups, setOpenTarotGroups] = useState<Record<string, boolean>>({
     "Старшие арканы": true,
   });
 
-  // Состояние для открытых групп Ленорман
-  const [openLenormandGroups, setOpenLenormandGroups] = useState<Record<string, boolean>>({
-    "Колода Ленорман": true,
-  });
+  const [pairResult01, setPairResult01] = useState<CombinationResult | null>(null);
+  const [pairResult12, setPairResult12] = useState<CombinationResult | null>(null);
 
-  // Результаты API для сочетаний
-  const [tarotCombResult, setTarotCombResult] = useState<{
-    pair1: string[] | null;
-    pair2: string[] | null;
-  }>({ pair1: null, pair2: null });
-  const [lenormandCombResult, setLenormandCombResult] = useState<{
-    pair1: string[] | null;
-    pair2: string[] | null;
-  }>({ pair1: null, pair2: null });
-  const [tarotLoading, setTarotLoading] = useState(false);
-  const [lenormandLoading, setLenormandLoading] = useState(false);
-
-  // Уведомления
   const [notify, setNotify] = useState<{
     open: boolean;
     status: TStatusNotify;
@@ -57,516 +46,345 @@ const CombinationsPage: FC = () => {
     text: string;
   }>({ open: false, status: "error", title: "", text: "" });
 
-  const showNotify = (status: TStatusNotify, title: string, text: string) => {
-    setNotify({ open: true, status, title, text });
+  const card0 = selectedCards[0];
+  const card1 = selectedCards[1];
+  const card2 = selectedCards[2];
+
+  // ── Modal actions ─────────────────────────────────────────────────────────
+
+  const openModal = (slotIndex: number) => {
+    setActiveSlot(slotIndex);
+    setIsModalOpen(true);
   };
 
-  // Удаление карты Таро по индексу
-  const removeTarotCard = (index: number) => {
-    setSelectedTarotCards((prev) => {
-      const newCards = [...prev];
-      newCards[index] = null;
-      return newCards;
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setActiveSlot(null);
+  };
+
+  const removeCard = (index: number) => {
+    setSelectedCards((prev) => {
+      const next = [...prev];
+      next[index] = null;
+      return next;
     });
   };
 
-  // Удаление карты Ленорман по индексу
-  const removeLenormandCard = (index: number) => {
-    setSelectedLenormandCards((prev) => {
-      const newCards = [...prev];
-      newCards[index] = null;
-      return newCards;
-    });
-  };
+  const selectCard = (type: TabType, id: number, name: string, image: string) => {
+    if (activeSlot === null) return;
 
-  // Добавление карты Таро
-  const addTarotCard = (id: number) => {
-    setSelectedTarotCards((prev) => {
-      const newCards = [...prev];
-      const emptyIndex = newCards.findIndex((card) => card === null);
-      if (emptyIndex !== -1 && !newCards.includes(id)) {
-        newCards[emptyIndex] = id;
-      }
-      return newCards;
-    });
-  };
-
-  // Добавление карты Ленорман
-  const addLenormandCard = (id: number) => {
-    setSelectedLenormandCards((prev) => {
-      const newCards = [...prev];
-      const emptyIndex = newCards.findIndex((card) => card === null);
-      if (emptyIndex !== -1 && !newCards.includes(id)) {
-        newCards[emptyIndex] = id;
-      }
-      return newCards;
-    });
-  };
-
-  const handleTarotSelect = (id: number) => {
-    addTarotCard(id);
-  };
-
-  const handleLenormandSelect = (id: number) => {
-    addLenormandCard(id);
-  };
-
-  // Drag start handler
-  const onDragStart =
-    (type: "tarot" | "lenormand", id: number, name: string, image: string) =>
-    (e: React.DragEvent) => {
-      const dragData: DragData = { type, id, name, image };
-      e.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-      e.dataTransfer.effectAllowed = "copy";
-
-      const dragImg = new Image();
-      dragImg.src = image;
-      dragImg.style.width = "100px";
-      dragImg.style.height = "150px";
-      e.dataTransfer.setDragImage(dragImg, 50, 75);
-    };
-
-  // Drop handler для Таро
-  const onTarotDrop = (position: number) => (e: React.DragEvent) => {
-    e.preventDefault();
-    try {
-      const data = JSON.parse(e.dataTransfer.getData("text/plain")) as DragData;
-      if (data.type === "tarot") {
-        setSelectedTarotCards((prev) => {
-          const newCards = [...prev];
-          if (newCards[position] === null && !newCards.includes(data.id)) {
-            newCards[position] = data.id;
-          }
-          return newCards;
-        });
-      }
-    } catch (error) {
-      console.error("Drop error:", error);
+    // Запрещаем смешивать карты Таро и Ленорман
+    const hasConflict = selectedCards.some(
+      (c, i) => c !== null && i !== activeSlot && c.type !== type
+    );
+    if (hasConflict) {
+      const existing = selectedCards.find((c) => c !== null);
+      setNotify({
+        open: true,
+        status: "warning",
+        title: "Нельзя смешивать колоды",
+        text:
+          existing?.type === "taro"
+            ? "Уже выбрана карта Таро — добавьте карту из той же колоды"
+            : "Уже выбрана карта Ленорман — добавьте карту из той же колоды",
+      });
+      return;
     }
+
+    setSelectedCards((prev) => {
+      const next = [...prev];
+      const alreadyInOtherSlot = next.some(
+        (c, i) => c?.type === type && c.id === id && i !== activeSlot
+      );
+      if (alreadyInOtherSlot) return prev;
+      next[activeSlot] = { type, id, name, image };
+      return next;
+    });
+    closeModal();
   };
 
-  // Drop handler для Ленорман
-  const onLenormandDrop = (position: number) => (e: React.DragEvent) => {
-    e.preventDefault();
-    try {
-      const data = JSON.parse(e.dataTransfer.getData("text/plain")) as DragData;
-      if (data.type === "lenormand") {
-        setSelectedLenormandCards((prev) => {
-          const newCards = [...prev];
-          if (newCards[position] === null && !newCards.includes(data.id)) {
-            newCards[position] = data.id;
-          }
-          return newCards;
-        });
-      }
-    } catch (error) {
-      console.error("Drop error:", error);
-    }
-  };
-
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
-  };
-
-  // Функции для переключения групп
   const toggleTarotGroup = (title: string) => {
-    setOpenTarotGroups((prev) => ({
-      ...prev,
-      [title]: !prev[title],
-    }));
+    setOpenTarotGroups((prev) => ({ ...prev, [title]: !prev[title] }));
   };
 
-  const toggleLenormandGroup = () => {
-    setOpenLenormandGroups((prev) => ({
-      ...prev,
-      "Колода Ленорман": !prev["Колода Ленорман"],
-    }));
-  };
-
-  // Получаем все карты Таро одним массивом
-  const allTarotCards = TARO_CARDS.flatMap((group) => group.cards);
-  const selectedTarotCardsData = selectedTarotCards
-    .map((id) => (id !== null ? allTarotCards.find((card) => card.id === id) : null))
-    .filter((card) => card !== null);
-
-  // Получаем все карты Ленорман
-  const selectedLenormandCardsData = selectedLenormandCards
-    .map((id) => (id !== null ? LENORMAND_CARDS.find((card) => card.id === id) : null))
-    .filter((card) => card !== null);
-
-  // Загрузка сочетаний Таро
-  const loadTarotCombinations = useCallback(async () => {
-    const ids = selectedTarotCards.filter((id): id is number => id !== null);
-    if (ids.length < 2) {
-      setTarotCombResult({ pair1: null, pair2: null });
-      return;
-    }
-    setTarotLoading(true);
-    try {
-      const pair1 = await fetchCombination("taro", [ids[0], ids[1]]);
-      let pair2: string[] | null = null;
-      if (ids.length === 3) {
-        pair2 = await fetchCombination("taro", [ids[1], ids[2]]);
-      }
-      setTarotCombResult({ pair1, pair2 });
-    } catch (error) {
-      console.error("[CombinationsPage] Ошибка загрузки сочетаний Таро:", error);
-      setTarotCombResult({ pair1: null, pair2: null });
-      if (error instanceof DOMException && error.name === "TimeoutError") {
-        showNotify("warning", "Таро", "Сервер не отвечает, попробуйте позже");
-      } else {
-        showNotify("error", "Таро", "Не удалось загрузить сочетание карт");
-      }
-    } finally {
-      setTarotLoading(false);
-    }
-  }, [selectedTarotCards]);
+  // ── Combination loading ───────────────────────────────────────────────────
 
   useEffect(() => {
-    loadTarotCombinations();
-  }, [loadTarotCombinations]);
-
-  // Загрузка сочетаний Ленорман
-  const loadLenormandCombinations = useCallback(async () => {
-    const ids = selectedLenormandCards.filter((id): id is number => id !== null);
-    if (ids.length < 2) {
-      setLenormandCombResult({ pair1: null, pair2: null });
-      return;
-    }
-    setLenormandLoading(true);
-    try {
-      const pair1 = await fetchCombination("lenormand", [ids[0], ids[1]]);
-      let pair2: string[] | null = null;
-      if (ids.length === 3) {
-        pair2 = await fetchCombination("lenormand", [ids[1], ids[2]]);
-      }
-      setLenormandCombResult({ pair1, pair2 });
-    } catch (error) {
-      console.error("[CombinationsPage] Ошибка загрузки сочетаний Ленорман:", error);
-      setLenormandCombResult({ pair1: null, pair2: null });
-      if (error instanceof DOMException && error.name === "TimeoutError") {
-        showNotify("warning", "Ленорман", "Сервер не отвечает, попробуйте позже");
-      } else {
-        showNotify("error", "Ленорман", "Не удалось загрузить сочетание карт");
-      }
-    } finally {
-      setLenormandLoading(false);
-    }
-  }, [selectedLenormandCards]);
+    if (!card0 || !card1 || card0.type !== card1.type) return;
+    const key = `${card0.type}:${card0.id}:${card1.id}`;
+    let cancelled = false;
+    fetchCombination(card0.type, [card0.id, card1.id])
+      .then((result) => {
+        if (!cancelled) setPairResult01({ key, text: result });
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setPairResult01({ key, text: null });
+          const isTimeout = error instanceof DOMException && error.name === "TimeoutError";
+          setNotify({
+            open: true,
+            status: isTimeout ? "warning" : "error",
+            title: "Сочетания",
+            text: isTimeout
+              ? "Сервер не отвечает, попробуйте позже"
+              : "Не удалось загрузить сочетание",
+          });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [card0, card1]);
 
   useEffect(() => {
-    loadLenormandCombinations();
-  }, [loadLenormandCombinations]);
+    if (!card1 || !card2 || card1.type !== card2.type) return;
+    const key = `${card1.type}:${card1.id}:${card2.id}`;
+    let cancelled = false;
+    fetchCombination(card1.type, [card1.id, card2.id])
+      .then((result) => {
+        if (!cancelled) setPairResult12({ key, text: result });
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setPairResult12({ key, text: null });
+          const isTimeout = error instanceof DOMException && error.name === "TimeoutError";
+          setNotify({
+            open: true,
+            status: isTimeout ? "warning" : "error",
+            title: "Сочетания",
+            text: isTimeout
+              ? "Сервер не отвечает, попробуйте позже"
+              : "Не удалось загрузить сочетание",
+          });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [card1, card2]);
 
-  // Получаем количество выбранных карт
-  const selectedTarotCount = selectedTarotCards.filter((id) => id !== null).length;
-  const selectedLenormandCount = selectedLenormandCards.filter((id) => id !== null).length;
+  // ── Close modal on Escape ─────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isModalOpen]);
+
+  const selectedCount = selectedCards.filter(Boolean).length;
+
+  // Derive loading / text from key comparison (avoids synchronous setState in effects)
+  const pair01Key =
+    card0 && card1 && card0.type === card1.type ? `${card0.type}:${card0.id}:${card1.id}` : null;
+  const pair01Loading = pair01Key !== null && pairResult01?.key !== pair01Key;
+  const pair01Text = pairResult01?.key === pair01Key ? pairResult01.text : null;
+
+  const pair12Key =
+    card1 && card2 && card1.type === card2.type ? `${card1.type}:${card1.id}:${card2.id}` : null;
+  const pair12Loading = pair12Key !== null && pairResult12?.key !== pair12Key;
+  const pair12Text = pairResult12?.key === pair12Key ? pairResult12.text : null;
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className={styles.page}>
-      <Intro>
-        <h1 className={styles.title}>СОЧЕТАНИЯ</h1>
-      </Intro>
-
-      <div className={styles.wrapper}>
-        {/* ========== БЛОК СОЧЕТАНИЙ ТАРО ========== */}
-        <div className={styles.selectionBlock}>
-          <div className={styles.selectionTitle}>СОЧЕТАНИЯ ТАРО</div>
-
-          {/* Три фиксированных слота для карт */}
-          <div className={styles.selectedCards}>
-            {[0, 1, 2].map((index) => {
-              const cardId = selectedTarotCards[index];
-              const card = cardId !== null ? allTarotCards.find((c) => c.id === cardId) : null;
-              return (
-                <div
-                  key={index}
-                  className={styles.selectedCardPlaceholder}
-                  onDrop={onTarotDrop(index)}
-                  onDragOver={onDragOver}
-                >
-                  {card ? (
-                    <Card
-                      name={card.name}
-                      image={card.image}
-                      hover={false}
-                      link=""
-                      onRemove={() => removeTarotCard(index)}
-                      showRemoveButton={true}
-                    />
-                  ) : (
-                    <div className={styles.cardBackTaro}></div>
-                  )}
-                </div>
-              );
-            })}
+    <>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, filter: "blur(8px)" }}
+          animate={{ opacity: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, filter: "blur(8px)" }}
+          className={styles.content}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          style={{ flex: 1, position: "relative", zIndex: 1 }}
+        >
+          {/* Title */}
+          <div className={styles.titleRow}>
+            <h1 className={styles.titleText}>Сочетания</h1>
           </div>
 
-          {selectedTarotCount === 0 && (
-            <div className={styles.hintText}>
-              Нажмите или перетащите карты, чтобы увидеть сочетание
-            </div>
-          )}
-
-          {selectedTarotCount >= 2 && (
-            <div className={styles.combinationWrapper}>
-              <div className={styles.combinationPair}>
-                <div className={styles.combinationPairCards}>
-                  <Card
-                    name={selectedTarotCardsData[0]?.name || ""}
-                    image={selectedTarotCardsData[0]?.image || ""}
-                    hover={false}
-                    link=""
-                  />
-                  <span className={styles.plus}>+</span>
-                  <Card
-                    name={selectedTarotCardsData[1]?.name || ""}
-                    hover={false}
-                    image={selectedTarotCardsData[1]?.image || ""}
-                    link=""
-                  />
-                </div>
-                <div className={styles.combinationText}>
-                  <strong>
-                    {selectedTarotCardsData[0]?.name} + {selectedTarotCardsData[1]?.name}
-                  </strong>
-                  {tarotLoading ? (
-                    <p>Загрузка...</p>
-                  ) : tarotCombResult.pair1 ? (
-                    tarotCombResult.pair1.map((text, i) => <p key={i}>{text}</p>)
-                  ) : (
-                    <p>Не удалось загрузить сочетание</p>
-                  )}
-                </div>
-              </div>
-
-              {selectedTarotCount === 3 && (
-                <>
-                  <div className={styles.orDivider}>ИЛИ</div>
-
-                  <div className={styles.combinationPair}>
-                    <div className={styles.combinationPairCards}>
-                      <Card
-                        name={selectedTarotCardsData[1]?.name || ""}
-                        image={selectedTarotCardsData[1]?.image || ""}
-                        hover={false}
-                        link=""
-                      />
-                      <span className={styles.plus}>+</span>
-                      <Card
-                        name={selectedTarotCardsData[2]?.name || ""}
-                        hover={false}
-                        image={selectedTarotCardsData[2]?.image || ""}
-                        link=""
-                      />
-                    </div>
-                    <div className={styles.combinationText}>
-                      <strong>
-                        {selectedTarotCardsData[1]?.name} + {selectedTarotCardsData[2]?.name}
-                      </strong>
-                      {tarotLoading ? (
-                        <p>Загрузка...</p>
-                      ) : tarotCombResult.pair2 ? (
-                        tarotCombResult.pair2.map((text, i) => <p key={i}>{text}</p>)
-                      ) : (
-                        <p>Не удалось загрузить сочетание</p>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
-          {selectedTarotCount === 1 && (
-            <div className={styles.hintText}>Выберите вторую карту (нажмите или перетащите)</div>
-          )}
-        </div>
-
-        {/* ========== КОЛОДА ТАРО С АККОРДЕОНОМ ========== */}
-        <h2 className={styles.sectionTitle}>ТАРО</h2>
-
-        {TARO_CARDS.map(({ title, cards }) => (
-          <div key={title} className={styles.groupContainer}>
-            <div className={styles.groupHeader} onClick={() => toggleTarotGroup(title)}>
-              <span>{title}</span>
+          {/* Panel */}
+          <div className={styles.panel}>
+            {/* Card slots */}
+            <div className={styles.cardSlotsContainer}>
               <img
-                src={rightArrow}
+                src={combinationIconLeft}
                 alt=""
-                className={`${styles.groupArrow} ${openTarotGroups[title] ? styles.groupArrowRotated : ""}`}
+                className={styles.titleIcon}
+                aria-hidden="true"
+              />
+
+              <div className={styles.cardSlots}>
+                {selectedCards.map((card, index) => (
+                  <div
+                    key={index}
+                    className={styles.cardSlot}
+                    onClick={() => openModal(index)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openModal(index);
+                      }
+                    }}
+                    aria-label={
+                      card
+                        ? `Слот ${index + 1}: ${card.name}. Нажмите для замены`
+                        : `Слот ${index + 1}: пустой. Нажмите для выбора карты`
+                    }
+                  >
+                    {card ? (
+                      <>
+                        <img
+                          src={card.image}
+                          alt={card.name}
+                          className={`${styles.cardImg} ${card.type === "lenormand" ? styles.lenormand : ""}`}
+                        />
+                        <span className={styles.cardLabel}>{card.name}</span>
+                        <button
+                          className={styles.removeBtn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeCard(index);
+                          }}
+                          aria-label={`Убрать карту ${card.name}`}
+                        >
+                          <svg
+                            width="10"
+                            height="10"
+                            viewBox="0 0 10 10"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M9 1L1 9M1 1L9 9"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </button>
+                      </>
+                    ) : (
+                      <img
+                        src={emptyCardSvg}
+                        alt=""
+                        className={styles.emptyCardImg}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+              <img
+                src={combinationIconRight}
+                alt=""
+                className={styles.titleIcon}
+                aria-hidden="true"
               />
             </div>
-            {openTarotGroups[title] && (
-              <ul className={styles.cardsContainer}>
-                {cards.map(({ id, name, image }) => (
-                  <div
-                    key={id}
-                    onClick={() => handleTarotSelect(id)}
-                    draggable
-                    onDragStart={onDragStart("tarot", id, name, image)}
-                    className={`${styles.cardWrapper} ${selectedTarotCards.includes(id) ? styles.selected : ""}`}
-                  >
-                    <Card name={name} image={image} link="" />
-                  </div>
-                ))}
-              </ul>
+            {selectedCount === 0 && (
+              <p className={styles.hint}>Нажмите на карту, чтобы выбрать сочетание</p>
             )}
-          </div>
-        ))}
+            {selectedCount === 1 && <p className={styles.hint}>Выберите ещё одну карту</p>}
 
-        {/* ========== БЛОК СОЧЕТАНИЙ ЛЕНОРМАН ========== */}
-        <div className={styles.selectionBlock}>
-          <div className={styles.selectionTitle}>СОЧЕТАНИЯ ЛЕНОРМАН</div>
-
-          {/* Три фиксированных слота для карт */}
-          <div className={styles.selectedCards}>
-            {[0, 1, 2].map((index) => {
-              const cardId = selectedLenormandCards[index];
-              const card = cardId !== null ? LENORMAND_CARDS.find((c) => c.id === cardId) : null;
-              return (
-                <div
-                  key={index}
-                  className={styles.selectedCardPlaceholder}
-                  onDrop={onLenormandDrop(index)}
-                  onDragOver={onDragOver}
+            {/* Combination results */}
+            <AnimatePresence>
+              {selectedCount >= 2 && ((card0 && card1) || (card1 && card2)) && (
+                <motion.div
+                  className={`${styles.combinations} ${selectedCount === 3 ? styles.combinationsThree : ""}`}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {card ? (
-                    <Card
-                      name={card.name}
-                      image={card.image}
-                      hover={false}
-                      link=""
-                      borderColor="#ab760d"
-                      onRemove={() => removeLenormandCard(index)}
-                      showRemoveButton={true}
-                    />
-                  ) : (
-                    <div className={styles.cardBackLenormand}></div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {selectedLenormandCount === 0 && (
-            <div className={styles.hintText}>
-              Нажмите или перетащите карты, чтобы увидеть сочетание
-            </div>
-          )}
-
-          {selectedLenormandCount >= 2 && (
-            <div className={styles.combinationWrapper}>
-              <div className={styles.combinationPair}>
-                <div className={styles.combinationPairCards}>
-                  <Card
-                    name={selectedLenormandCardsData[0]?.name || ""}
-                    image={selectedLenormandCardsData[0]?.image || ""}
-                    link=""
-                    borderColor="#ab760d"
-                    hover={false}
-                  />
-                  <span className={styles.plus}>+</span>
-                  <Card
-                    name={selectedLenormandCardsData[1]?.name || ""}
-                    image={selectedLenormandCardsData[1]?.image || ""}
-                    link=""
-                    borderColor="#ab760d"
-                    hover={false}
-                  />
-                </div>
-                <div className={styles.combinationText}>
-                  <strong>
-                    {selectedLenormandCardsData[0]?.name} + {selectedLenormandCardsData[1]?.name}
-                  </strong>
-                  {lenormandLoading ? (
-                    <p>Загрузка...</p>
-                  ) : lenormandCombResult.pair1 ? (
-                    lenormandCombResult.pair1.map((text, i) => <p key={i}>{text}</p>)
-                  ) : (
-                    <p>Не удалось загрузить сочетание</p>
-                  )}
-                </div>
-              </div>
-
-              {selectedLenormandCount === 3 && (
-                <>
-                  <div className={styles.orDivider}>ИЛИ</div>
-
-                  <div className={styles.combinationPair}>
-                    <div className={styles.combinationPairCards}>
-                      <Card
-                        name={selectedLenormandCardsData[1]?.name || ""}
-                        image={selectedLenormandCardsData[1]?.image || ""}
-                        link=""
-                        borderColor="#ab760d"
-                        hover={false}
-                      />
-                      <span className={styles.plus}>+</span>
-                      <Card
-                        name={selectedLenormandCardsData[2]?.name || ""}
-                        image={selectedLenormandCardsData[2]?.image || ""}
-                        link=""
-                        borderColor="#ab760d"
-                        hover={false}
-                      />
+                  {/* Pair 0–1 */}
+                  {card0 && card1 && (
+                    <div className={styles.combinationPair}>
+                      <div className={styles.pairCards}>
+                        <img
+                          src={card0.image}
+                          alt={card0.name}
+                          className={`${styles.pairCardImg} ${card0.type === "lenormand" ? styles.lenormand : ""}`}
+                        />
+                        <span className={styles.plus}>+</span>
+                        <img
+                          src={card1.image}
+                          alt={card1.name}
+                          className={`${styles.pairCardImg} ${card1.type === "lenormand" ? styles.lenormand : ""}`}
+                        />
+                      </div>
+                      <div className={styles.pairResult}>
+                        <strong>
+                          {card0.name} + {card1.name}
+                        </strong>
+                        {card0.type !== card1.type ? (
+                          <p>Сочетания карт разных колод не поддерживаются</p>
+                        ) : pair01Loading ? (
+                          <div className={styles.loadingWrapper}>
+                            <span className={styles.loadingDot} />
+                            <span className={styles.loadingDot} />
+                            <span className={styles.loadingDot} />
+                          </div>
+                        ) : pair01Text ? (
+                          pair01Text.map((t, i) => <p key={i}>{t}</p>)
+                        ) : (
+                          <p>Не удалось загрузить сочетание</p>
+                        )}
+                      </div>
                     </div>
-                    <div className={styles.combinationText}>
-                      <strong>
-                        {selectedLenormandCardsData[1]?.name} +{" "}
-                        {selectedLenormandCardsData[2]?.name}
-                      </strong>
-                      {lenormandLoading ? (
-                        <p>Загрузка...</p>
-                      ) : lenormandCombResult.pair2 ? (
-                        lenormandCombResult.pair2.map((text, i) => <p key={i}>{text}</p>)
-                      ) : (
-                        <p>Не удалось загрузить сочетание</p>
-                      )}
-                    </div>
-                  </div>
-                </>
+                  )}
+
+                  {/* Pair 1–2 */}
+                  {card1 && card2 && (
+                    <>
+                      {/* <div className={styles.orDivider}>ИЛИ</div> */}
+                      <div className={styles.combinationPair}>
+                        <div className={styles.pairCards}>
+                          <img
+                            src={card1.image}
+                            alt={card1.name}
+                            className={`${styles.pairCardImg} ${card1.type === "lenormand" ? styles.lenormand : ""}`}
+                          />
+                          <span className={styles.plus}>+</span>
+                          <img
+                            src={card2.image}
+                            alt={card2.name}
+                            className={`${styles.pairCardImg} ${card2.type === "lenormand" ? styles.lenormand : ""}`}
+                          />
+                        </div>
+                        <div className={styles.pairResult}>
+                          <strong>
+                            {card1.name} + {card2.name}
+                          </strong>
+                          {card1.type !== card2.type ? (
+                            <p>Сочетания карт разных колод не поддерживаются</p>
+                          ) : pair12Loading ? (
+                            <div className={styles.loadingWrapper}>
+                              <span className={styles.loadingDot} />
+                              <span className={styles.loadingDot} />
+                              <span className={styles.loadingDot} />
+                            </div>
+                          ) : pair12Text ? (
+                            pair12Text.map((t, i) => <p key={i}>{t}</p>)
+                          ) : (
+                            <p>Не удалось загрузить сочетание</p>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
               )}
-            </div>
-          )}
-
-          {selectedLenormandCount === 1 && (
-            <div className={styles.hintText}>Выберите вторую карту (нажмите или перетащите)</div>
-          )}
-        </div>
-
-        {/* ========== КОЛОДА ЛЕНОРМАН С АККОРДЕОНОМ ========== */}
-        <h2 className={styles.sectionTitle}>ЛЕНОРМАН</h2>
-
-        <div className={styles.groupContainer}>
-          <div className={styles.groupHeader} onClick={toggleLenormandGroup}>
-            <span>Выбор карт</span>
-            <img
-              src={rightArrow}
-              alt=""
-              className={`${styles.groupArrow} ${openLenormandGroups["Колода Ленорман"] ? styles.groupArrowRotated : ""}`}
-            />
+            </AnimatePresence>
           </div>
-          {openLenormandGroups["Колода Ленорман"] && (
-            <>
-              <p className={styles.orderNote}>Порядок карт влияет на значение</p>
-              <ul className={styles.cardsContainer}>
-                {LENORMAND_CARDS.map(({ id, name, image }) => (
-                  <div
-                    key={id}
-                    onClick={() => handleLenormandSelect(id)}
-                    draggable
-                    onDragStart={onDragStart("lenormand", id, name, image)}
-                    className={`${styles.cardWrapper} ${selectedLenormandCards.includes(id) ? styles.selected : ""}`}
-                  >
-                    <Card name={name} image={image} link="" borderColor="#ab760d" />
-                  </div>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
+      {/* ── Modal ─────────────────────────────────────────────────────────── */}
 
       <Notify
         status={notify.status}
@@ -575,7 +393,179 @@ const CombinationsPage: FC = () => {
         title={notify.title}
         text={notify.text}
       />
-    </div>
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            className={styles.overlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={closeModal}
+          >
+            <motion.div
+              className={styles.modal}
+              initial={{ opacity: 0, scale: 0.96, y: 24 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 24 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-title"
+            >
+              {/* Header */}
+              <div className={styles.modalHeader}>
+                <h2 id="modal-title" className={styles.modalTitle}>
+                  Выберите карту
+                </h2>
+                <button
+                  className={styles.modalClose}
+                  onClick={closeModal}
+                  aria-label="Закрыть окно"
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                    <path
+                      d="M16 2L2 16M2 2L16 16"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Tabs */}
+              <div className={styles.tabs} role="tablist" aria-label="Тип колоды">
+                {(["taro", "lenormand"] as TabType[]).map((tab) => (
+                  <button
+                    key={tab}
+                    role="tab"
+                    id={`tab-${tab}`}
+                    aria-selected={activeTab === tab}
+                    aria-controls={`tabpanel-${tab}`}
+                    className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ""}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab === "taro" ? "Таро" : "Ленорман"}
+                  </button>
+                ))}
+              </div>
+
+              {/* Body */}
+              <div
+                className={styles.modalBody}
+                role="tabpanel"
+                id={`tabpanel-${activeTab}`}
+                aria-labelledby={`tab-${activeTab}`}
+              >
+                {activeTab === "taro" ? (
+                  <div className={styles.taroList}>
+                    {TARO_CARDS.map(({ title, cards }) => (
+                      <div key={title} className={styles.groupBlock}>
+                        <div
+                          className={styles.groupHeader}
+                          onClick={() => toggleTarotGroup(title)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              toggleTarotGroup(title);
+                            }
+                          }}
+                          aria-expanded={!!openTarotGroups[title]}
+                        >
+                          <img src={lineIcon} alt="" className={styles.lineDecor} />
+                          <span className={styles.categoryTitle}>{title}</span>
+                          <img src={lineIcon} alt="" className={styles.lineDecor} />
+                        </div>
+                        <AnimatePresence initial={false}>
+                          {openTarotGroups[title] && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2, ease: "easeInOut" }}
+                              style={{ overflow: "hidden" }}
+                            >
+                              <ul className={styles.cardGrid}>
+                                {cards.map(({ id, name, image }) => {
+                                  const disabled = selectedCards.some(
+                                    (c, i) => c?.type === "taro" && c.id === id && i !== activeSlot
+                                  );
+                                  return (
+                                    <li
+                                      key={id}
+                                      className={`${styles.cardGridItem} ${disabled ? styles.cardGridItemDisabled : ""}`}
+                                      onClick={() =>
+                                        !disabled && selectCard("taro", id, name, image)
+                                      }
+                                      role="button"
+                                      tabIndex={disabled ? -1 : 0}
+                                      onKeyDown={(e) => {
+                                        if ((e.key === "Enter" || e.key === " ") && !disabled) {
+                                          e.preventDefault();
+                                          selectCard("taro", id, name, image);
+                                        }
+                                      }}
+                                      aria-disabled={disabled}
+                                    >
+                                      <img
+                                        src={image}
+                                        alt={name}
+                                        className={styles.cardGridThumb}
+                                      />
+                                      <span className={styles.cardGridName}>{name}</span>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className={styles.cardGrid}>
+                    {LENORMAND_CARDS.map(({ id, name, image }) => {
+                      const disabled = selectedCards.some(
+                        (c, i) => c?.type === "lenormand" && c.id === id && i !== activeSlot
+                      );
+                      return (
+                        <li
+                          key={id}
+                          className={`${styles.cardGridItem} ${disabled ? styles.cardGridItemDisabled : ""} ${styles.cardGridItemLenormand}`}
+                          onClick={() => !disabled && selectCard("lenormand", id, name, image)}
+                          role="button"
+                          tabIndex={disabled ? -1 : 0}
+                          onKeyDown={(e) => {
+                            if ((e.key === "Enter" || e.key === " ") && !disabled) {
+                              e.preventDefault();
+                              selectCard("lenormand", id, name, image);
+                            }
+                          }}
+                          aria-disabled={disabled}
+                        >
+                          <img
+                            src={image}
+                            alt={name}
+                            className={`${styles.cardGridThumb} ${styles.cardGridThumbLenormand}`}
+                          />
+                          <span className={styles.cardGridName}>{name}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

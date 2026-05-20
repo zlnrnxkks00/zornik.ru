@@ -5,7 +5,8 @@
   --cl-black: #130426;
 
   --cl-main: #502958;
-  --cl-secondary: #ab760d;
+  --cl-secondary: #eed386;
+  --cl-secondary-light: #ffeb99;
 
   --cl-text: #fbe5d8;
 }
@@ -26,10 +27,42 @@
 }
 html {
   scroll-behavior: smooth;
+  /* Запрет авто-увеличения шрифта при повороте экрана на iOS */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   color: var(--cl-text);
   font-size: 18px;
   background: var(--cl-black);
+  /* Сглаживание шрифтов в Safari/Chrome */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Убрать «синюю подсветку» при тапе на iOS/Android */
+  -webkit-tap-highlight-color: transparent;
+  /* Отключить «оттяжку» страницы на iOS, т.к. фон всегда .page */
+  overscroll-behavior: none;
+}
+
+/* Унификация отображения кнопок (iOS добавляет градиент по умолчанию) */
+button {
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Адекватные ползунки на WebKit-браузерах по всему приложению */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(238, 211, 134, 0.3) transparent;
+}
+
+@include responsive(phone) {
+  body {
+    font-size: 16px;
+  }
 }
