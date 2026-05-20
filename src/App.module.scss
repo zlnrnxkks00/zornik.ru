@@ -1,0 +1,26 @@
+.page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  /* Корректная высота на мобильных (iOS Safari, Android Chrome) с учётом UI-баров */
+  height: 100svh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: #000;
+}
+
+.video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  /* iOS Safari: предотвращаем мерцание при autoplay */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}

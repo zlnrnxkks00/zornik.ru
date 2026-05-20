@@ -1,173 +1,43 @@
-import { FC, useState, useEffect, useRef } from "react";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./HomePage.module.scss";
-import introBg from "../../assets/intro_bg.png";
-import starIcon from "../../assets/other_elements/star.png";
-import videoStars from "../../assets/other_elements/video_stars.mp4";
-import { motion, AnimatePresence } from "framer-motion";
+import moonIcon from "../../assets/moon.svg";
+import startImage from "../../assets/start_image.png";
 
+import logo from "../../assets/logo_zornik.svg";
 const HomePage: FC = () => {
-  const [animationStage, setAnimationStage] = useState<"title" | "menu">("title");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const tryPlay = () => {
-      video.play().catch(() => {});
-    };
-
-    // Запускаем сразу и при событии canplay (Safari ждёт готовности буфера)
-    tryPlay();
-    video.addEventListener("canplay", tryPlay);
-
-    // Запасной вариант: первое касание/клик (iOS в режиме энергосбережения)
-    document.addEventListener("touchstart", tryPlay, { once: true });
-
-    return () => {
-      video.removeEventListener("canplay", tryPlay);
-      document.removeEventListener("touchstart", tryPlay);
-    };
-  }, []);
-
-  useEffect(() => {
-    // Проверяем, мобильное ли устройство
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    // На мобильных устройствах не скрываем надпись
-    if (!isMobile) {
-      const timer = setTimeout(() => {
-        setAnimationStage("menu");
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isMobile]);
 
   const handleNavigation = (path: string) => {
     navigate(path);
-    setIsMenuOpen(false);
-  };
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  // Обработчик клика по анимации (открывает бургер-меню на мобильных)
-  const handleAnimationClick = () => {
-    if (isMobile) {
-      toggleMenu();
-    }
   };
 
   return (
-    <div className={styles.page}>
-      {/* Видео фон */}
-      <video
-        ref={videoRef}
-        className={styles.video}
-        autoPlay={true}
-        muted={true}
-        loop={true}
-        playsInline={true}
-        x-webkit-airplay="allow"
-        preload="auto"
-        disablePictureInPicture
-      >
-        <source src={videoStars} type="video/mp4" />
-      </video>
-
-      {/* Бургер-кнопка для мобильных устройств */}
-      <button
-        className={`${styles.burger} ${isMenuOpen ? styles.burgerOpen : ""}`}
-        onClick={toggleMenu}
-        aria-label="Меню"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      {/* Мобильное меню */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.nav
-            className={styles.navMobile}
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            <div className={styles.navMobileContent}>
-              <button
-                className={styles.mobileMenuButton}
-                onClick={() => handleNavigation("/lenormand")}
-              >
-                ЛЕНОРМАН
-              </button>
-              <img src={starIcon} alt="" className={styles.mobileStar} />
-              <button className={styles.mobileMenuButton} onClick={() => handleNavigation("/taro")}>
-                ТАРО
-              </button>
-              <img src={starIcon} alt="" className={styles.mobileStar} />
-              <button
-                className={styles.mobileMenuButton}
-                onClick={() => handleNavigation("/combinations")}
-              >
-                СОЧЕТАНИЯ
-              </button>
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-
-      {/* Контент */}
+    <>
+      <img src={logo} alt="Logo" className={styles.logo} />
       <div className={styles.content}>
-        <div
-          className={`${styles.circle} ${isMobile ? styles.circleClickable : ""}`}
-          onClick={handleAnimationClick}
-        >
-          <img src={introBg} alt="" className={styles.circleBg} />
+        <section className={styles.content__intro}>
+          <div className={styles.title}>
+            <img src={moonIcon} alt="Moon" className={styles.title__icon} />
+            <h1 className={styles.title__text}>Zornik</h1>
+          </div>
 
-          {/* Надпись ZORNIK - на мобильных всегда видна */}
-          {(animationStage === "title" || isMobile) && (
-            <div className={`${styles.titleText} ${isMobile ? styles.titleTextMobile : ""}`}>
-              ZORNIK
-            </div>
-          )}
+          <div className={styles.content__buttons}>
+            <button onClick={() => handleNavigation("/taro")} type="button">
+              ТАРО
+            </button>
+            <button onClick={() => handleNavigation("/lenormand")} type="button">
+              ЛЕНОРМАН
+            </button>
+            <button onClick={() => handleNavigation("/combinations")} type="button">
+              СОЧЕТАНИЯ
+            </button>
+          </div>
+        </section>
 
-          {/* Десктопное меню (только не на мобильных) */}
-          {animationStage === "menu" && !isMobile && (
-            <div className={styles.menuDesktop}>
-              <button className={styles.menuButton} onClick={() => handleNavigation("/lenormand")}>
-                ЛЕНОРМАН
-              </button>
-              <img src={starIcon} alt="" className={styles.star} />
-              <button className={styles.menuButton} onClick={() => handleNavigation("/taro")}>
-                ТАРО
-              </button>
-              <img src={starIcon} alt="" className={styles.star} />
-              <button
-                className={styles.menuButton}
-                onClick={() => handleNavigation("/combinations")}
-              >
-                СОЧЕТАНИЯ
-              </button>
-            </div>
-          )}
-        </div>
+        <img src={startImage} alt="Start" className={styles.introImg} />
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,289 +1,209 @@
 @use "responsive" as *;
 
-.page {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  overflow: hidden;
-  background-color: #000;
-}
-
-.video {
+.logo {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
+  top: 34px;
+  left: 45px;
+  width: 144px;
+  height: auto;
+  z-index: 2;
 }
-
 .content {
   position: relative;
   z-index: 1;
-  display: flex;
+  display: grid;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
+  grid-template-columns: 1fr 610px;
+  padding: 34px;
+  padding-bottom: 60px;
+  height: 100%;
+
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    margin-top: 120px;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    margin-top: 70px;
+    font-size: 40px;
+    color: var(--cl-secondary);
+    font-family: "Montserrat", sans-serif;
+  }
 }
 
-.circle {
+.title {
+  display: flex;
+  align-items: center;
   position: relative;
-  width: 100%;
-  max-width: 1500px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+  &__icon {
+    width: 367px;
+    height: 367px;
+    position: absolute;
+    left: -183px;
+  }
+
+  &__text {
+    font-size: 160px;
+    font-family: "Gwendolyn", cursive;
+    font-weight: 400;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--cl-secondary);
+  }
 }
 
-.circleBg {
-  width: 100%;
-  max-width: 1400px;
+.introImg {
+  max-width: 100%;
   height: auto;
   display: block;
 }
 
-.titleText {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: "Antic Didone", serif;
-  font-weight: 400;
-  font-size: 250px;
-  line-height: 100%;
-  text-transform: uppercase;
-  color: #ffffff;
-  text-align: center;
-  white-space: nowrap;
-  animation: fadeOut 0.8s ease forwards;
-  animation-delay: 2s;
-}
+/* ── Адаптив ─────────────────────────────────────────────────────────────── */
 
-/* Десктопное меню */
-.menuDesktop {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: fadeIn 0.8s ease forwards;
-}
-
-.menuButton {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 400;
-  font-size: 65px;
-  line-height: 110px;
-  text-align: center;
-  text-transform: uppercase;
-  color: #ffffff;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-  white-space: nowrap;
-
-  &:hover {
-    opacity: 0.8;
-  }
-}
-
-.star {
-  width: 19px;
-  height: 18.5px;
-  display: block;
-  margin: 0;
-}
-
-/* Бургер-кнопка (скрыта на десктопе) */
-.burger {
-  display: none;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 30px;
-  height: 21px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 200;
-
-  span {
-    width: 100%;
-    height: 3px;
-    background-color: #ffffff;
-    border-radius: 3px;
-    transition: all 0.3s ease;
+@include responsive(fullscreen) {
+  .content {
+    grid-template-columns: 1fr 440px;
   }
 
-  &.burgerOpen {
-    span:nth-child(1) {
-      transform: translateY(9px) rotate(45deg);
+  .title {
+    &__icon {
+      width: 280px;
+      height: 280px;
+      left: -140px;
     }
-    span:nth-child(2) {
-      opacity: 0;
-    }
-    span:nth-child(3) {
-      transform: translateY(-9px) rotate(-45deg);
+    &__text {
+      font-size: 120px;
     }
   }
-}
 
-/* Мобильное меню */
-.navMobile {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: var(--cl-black);
-  z-index: 150;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.navMobileContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.mobileMenuButton {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 400;
-  font-size: 36px;
-  line-height: 60px;
-  text-align: center;
-  text-transform: uppercase;
-  color: #ffffff;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-
-  &:hover {
-    opacity: 0.8;
+  .content__buttons {
+    font-size: 32px;
+    margin-top: 50px;
+    gap: 28px;
   }
 }
 
-.mobileStar {
-  width: 19px;
-  height: 18.5px;
-  display: block;
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    visibility: hidden;
-  }
-  100% {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-/* ========== АДАПТИВ ========== */
-
-/* Планшет (768px - 1024px) */
-@include responsive(tablet) {
-  .titleText {
-    font-size: 160px;
-    white-space: nowrap;
+@include responsive(screen) {
+  .logo {
+    top: 24px;
+    left: 24px;
+    width: 120px;
   }
 
-  .circleBg {
-    max-width: 800px;
-  }
-
-  .menuButton {
-    font-size: 45px;
-    line-height: 80px;
-  }
-
-  .star {
-    width: 16px;
-    height: 15.5px;
-  }
-
-  .burger {
-    display: none;
-  }
-
-  .menuDesktop {
+  .content {
     display: flex;
-  }
-}
-
-/* Телефон (до 768px) */
-@include responsive(phone) {
-  .titleText {
-    font-size: 90px;
-    white-space: nowrap;
+    flex-direction: column;
+    padding: 24px;
+    padding-bottom: 40px;
+    gap: 60px;
   }
 
-  .titleTextMobile {
-    animation: none;
-    opacity: 1;
-    visibility: visible;
+  .content__intro {
+    margin-top: 80px;
+    gap: 32px;
   }
 
-  .circleBg {
-    max-width: 700px;
+  .title {
+    &__icon {
+      width: 220px;
+      height: 220px;
+      left: -110px;
+    }
+    &__text {
+      font-size: 100px;
+    }
   }
 
-  /* Скрываем десктопное меню */
-  .menuDesktop {
-    display: none;
-  }
-
-  /* Показываем бургер */
-  .burger {
-    display: flex;
-  }
-
-  .mobileMenuButton {
+  .content__buttons {
     font-size: 28px;
-    line-height: 50px;
+    margin-top: 70px;
+    gap: 40px;
+  }
+
+  .introImg {
+    height: 50%;
+    margin-top: auto;
+    object-fit: contain;
   }
 }
 
-/* Очень маленькие телефоны (до 480px) */
-@media (max-width: 480px) {
-  .titleText {
-    font-size: 70px;
+@include responsive(tablet) {
+  .logo {
+    top: 18px;
+    left: 18px;
+    width: 96px;
   }
 
-  .circleBg {
-    max-width: 500px;
+  .content {
+    flex: 1;
+    padding: 20px;
+    padding-top: 90px;
+    padding-bottom: 32px;
+    gap: 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .mobileMenuButton {
-    font-size: 24px;
-    line-height: 40px;
+  .content__intro {
+    margin-top: 20px;
+    gap: 80px;
+    flex: 1;
   }
 
-  .mobileStar {
-    width: 14px;
-    height: 13.5px;
+  .title {
+    justify-content: center;
+
+    &__icon {
+      width: 200px;
+      height: 200px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.6;
+    }
+    &__text {
+      font-size: 80px;
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  .introImg {
+    margin: 0 auto;
+    margin-top: 60px;
+  }
+}
+
+@include responsive(phone) {
+  .logo {
+    top: 14px;
+    left: 14px;
+    width: 80px;
+  }
+
+  .content {
+    padding: 16px;
+    padding-top: 76px;
+    padding-bottom: 24px;
+  }
+
+  .title {
+    &__icon {
+      width: 160px;
+      height: 160px;
+    }
+    &__text {
+      font-size: 56px;
+    }
+  }
+
+  .introImg {
+    height: auto;
   }
 }
