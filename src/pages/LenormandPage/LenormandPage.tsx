@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 import styles from "./LenormandPage.module.scss";
 import { LENORMAND_CARDS } from "../../constants/lenormand-cards";
 import { motion, AnimatePresence } from "framer-motion";
@@ -78,6 +78,17 @@ const LenormandPage: FC = () => {
     };
   }, [selectedCard.id]);
 
+  const rightPanelRef = useRef<HTMLDivElement>(null);
+
+  const handleSelectCard = (card: TCard) => {
+    setSelectedCard(card);
+    if (window.matchMedia("(max-width: 1200px)").matches) {
+      setTimeout(() => {
+        rightPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
+  };
+
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
@@ -108,7 +119,7 @@ const LenormandPage: FC = () => {
               <motion.li
                 key={card.id}
                 className={`${styles.cardItem} ${selectedCard.id === card.id ? styles.cardItem_active : ""}`}
-                onClick={() => setSelectedCard(card)}
+                onClick={() => handleSelectCard(card)}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.02, duration: 0.25 }}
@@ -125,7 +136,7 @@ const LenormandPage: FC = () => {
         </div>
 
         {/* Right panel */}
-        <div className={styles.rightPanel}>
+        <div ref={rightPanelRef} className={styles.rightPanel}>
           <img src={starsTop} alt="" className={`${styles.starsImg} ${styles.starsImg_top}`} />
 
           <div className={styles.cardContent}>
