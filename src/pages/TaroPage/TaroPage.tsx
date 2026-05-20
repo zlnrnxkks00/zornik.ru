@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 import styles from "./TaroPage.module.scss";
 import { TARO_CARDS } from "../../constants/taro-cards";
 import { motion, AnimatePresence } from "framer-motion";
@@ -85,6 +85,17 @@ const TaroPage: FC = () => {
     };
   }, [selectedCard.id]);
 
+  const rightPanelRef = useRef<HTMLDivElement>(null);
+
+  const handleSelectCard = (card: TCard) => {
+    setSelectedCard(card);
+    if (window.matchMedia("(max-width: 1200px)").matches) {
+      setTimeout(() => {
+        rightPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
+  };
+
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
@@ -140,7 +151,7 @@ const TaroPage: FC = () => {
                             <motion.li
                               key={card.id}
                               className={styles.cardItem}
-                              onClick={() => setSelectedCard(card)}
+                              onClick={() => handleSelectCard(card)}
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: i * 0.03, duration: 0.2 }}
@@ -164,7 +175,7 @@ const TaroPage: FC = () => {
         </div>
 
         {/* Right panel */}
-        <div className={styles.rightPanel}>
+        <div ref={rightPanelRef} className={styles.rightPanel}>
           <img src={cloudTop} alt="" className={styles.cloudImg} />
 
           <div className={styles.cardContent}>
