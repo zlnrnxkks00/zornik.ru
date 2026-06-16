@@ -35,14 +35,14 @@
   flex-shrink: 0;
 
   &__icon {
-    width: 400px;
+    width: 360px;
     position: absolute;
     aspect-ratio: 636/383;
     left: -30px;
   }
 
   &__text {
-    font-size: 140px;
+    font-size: 120px;
     font-family: "Gwendolyn", cursive;
     font-weight: 400;
     line-height: 1;
@@ -321,10 +321,10 @@
     padding-bottom: 40px;
 
     &__icon {
-      width: 320px;
+      width: 280px;
     }
     &__text {
-      font-size: 110px;
+      font-size: 90px;
     }
   }
 
